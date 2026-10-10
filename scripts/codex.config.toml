@@ -1,0 +1,12 @@
+# Exact Codex config for the API Key Claw Responses endpoint.
+# Copy to ~/.codex/config.toml, or pass this file with: --ak config=scripts/codex.config.toml
+# No secrets belong in this file. The key is the env var named by env_key.
+
+model = "gpt-6.1-sol"
+model_provider = "apikeyclaw"
+
+[model_providers.apikeyclaw]
+name = "API Key Claw"
+base_url = "https://sub2api.apikeyclaw.com/v1"
+wire_api = "responses"
+env_key = "APIKEYCLAW_API_KEY"

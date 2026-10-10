@@ -1,0 +1,45 @@
+{
+  "participants": [
+    {
+      "id": "A",
+      "collateral": 0,
+      "reserve": 0
+    },
+    {
+      "id": "B",
+      "collateral": 5,
+      "reserve": 0
+    },
+    {
+      "id": "C",
+      "collateral": 0,
+      "reserve": 0
+    }
+  ],
+  "payments": [
+    {
+      "id": "p1",
+      "debtor": "A",
+      "creditor": "C",
+      "amount": 5,
+      "priority": 0,
+      "seq": 1
+    },
+    {
+      "id": "p2",
+      "debtor": "B",
+      "creditor": "A",
+      "amount": 5,
+      "priority": 0,
+      "seq": 2
+    },
+    {
+      "id": "p3",
+      "debtor": "A",
+      "creditor": "B",
+      "amount": 5,
+      "priority": 0,
+      "seq": 3
+    }
+  ]
+}

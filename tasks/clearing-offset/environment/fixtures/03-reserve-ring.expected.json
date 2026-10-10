@@ -1,0 +1,11 @@
+{
+  "settled": [
+    "p1",
+    "p2"
+  ],
+  "unsettled": [],
+  "balances": {
+    "A": 10,
+    "B": 0
+  }
+}
