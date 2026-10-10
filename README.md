@@ -1,6 +1,6 @@
 # Clearing Offset
 
-One original Terminal-Bench task, `tasks/clearing-offset` (version 1.3.0). A payments engine is supposed to settle batches under a liquidity-saving rulebook (`environment/docs/rules.md`, revision 4). The checked-in engine only walks each priority queue and restarts after every payment, so floors, ceilings, partial lots, offsets with fees, and the round structure are all missing. The job is to make `python -m lumen.settle` match the rulebook for every valid batch, exactly, within 5 seconds per batch on one core and using only the Python standard library.
+One original Terminal-Bench task, `tasks/clearing-offset` (version 1.3.1). A payments engine is supposed to settle batches under a liquidity-saving rulebook (`environment/docs/rules.md`, revision 4). The checked-in engine only walks each priority queue and restarts after every payment, so floors, ceilings, partial lots, offsets with fees, and the round structure are all missing. The job is to make `python -m lumen.settle` match the rulebook for every valid batch, exactly, within 5 seconds per batch on one core and using only the Python standard library.
 
 The layout is the Harbor task format used by [harbor-framework/terminal-bench](https://github.com/harbor-framework/terminal-bench) (the tree the contributing guide now documents). Run it with `harbor run -p tasks/clearing-offset ...`.
 
