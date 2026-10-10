@@ -1,10 +1,10 @@
 # Clearing Offset
 
-One original Terminal-Bench task, `tasks/clearing-offset`. A payments engine is supposed to settle batches under a small liquidity-saving rulebook. The checked-in engine only walks each priority queue and restarts after every payment, so rings, reserve-backed offsets, and the scan rule are wrong. The job is to make `python -m lumen.settle` match `/app/docs/rules.md` for every valid batch.
+One original Terminal-Bench task, `tasks/clearing-offset` (version 1.2.0). A payments engine is supposed to settle batches under a liquidity-saving rulebook (`environment/docs/rules.md`, revision 3). The checked-in engine only walks each priority queue and restarts after every payment, so floors, ceilings, partial lots, offsets with fees, and the round structure are all missing. The job is to make `python -m lumen.settle` match the rulebook for every valid batch, exactly, within 5 seconds per batch on one core and using only the Python standard library.
 
 The layout is the Harbor task format used by [harbor-framework/terminal-bench](https://github.com/harbor-framework/terminal-bench) (the tree the contributing guide now documents). Run it with `harbor run -p tasks/clearing-offset ...`.
 
-This repository is the take-home artifact. It is not a pull request to Terminal-Bench. License: MIT.
+This repository is the take-home artifact. It is not a pull request to Terminal-Bench. License: MIT. Results of every check and trial, with job ids, are in [RESULTS.md](RESULTS.md).
 
 ## Author
 
@@ -12,23 +12,26 @@ The task author is `imwyvern`. `author_email` is `imwyvern@example.com` because 
 
 ## What the agent sees
 
-`/app/docs/rules.md` is the normative procedure: unilateral payments respect a reserve and a full-queue scan, then at most one simultaneous 2-cycle or 3-cycle is settled, priorities 0 then 1 then 2. Four fixtures under `/app/fixtures/` have checked reports. The starting `engine.py` passes the plain chain and fails the ring, the reserve ring, and the scan-order fixture.
+`/app/docs/rules.md` is the normative procedure. Participants have a collateral, a reserve and a ceiling. Unilateral payments use a floor (half the reserve for priority 0, the full reserve otherwise) and respect the creditor's ceiling; priority 2 payments can also be paid in partial lots of 5, in a queue ordered by amount. When the unilateral scan is stuck, the best closed and funded bundle of payments is settled at once; every paying participant pays a 5 percent rounded-up fee that counts in the funded test; bundles are ranked by sum, then fewest participants, then most payments, then sorted ids. The procedure runs in rounds that restart at priority 0 after any action. Four fixtures under `/app/fixtures/` have checked reports. The starting `engine.py` passes only the plain chain.
 
 ## Verification
 
-Grading does not read the fixture files and does not import the submitted package into the root test process. `tests/test.sh` runs pytest, which executes `python -m lumen.settle` as `nobody` with a fresh environment and a 5 second timeout per batch. Reports must match on the set of settled ids, the set of unsettled ids, and integer balances.
+Grading does not read the fixture files and does not import the submitted package into the root test process. `tests/test.sh` runs pytest, which executes `python -m lumen.settle` as `nobody` with a fresh environment and a 5 second timeout per batch on 64 stored batches in `tests/cases/`. Reports must match on the set of settled ids, the set of unsettled ids, and integer balances. `/tests` is mode `0700`, so the unprivileged process cannot read the stored reports or the transcription in `tests/reference.py`. The only agent artifact uploaded is `/app/src/`. Reward is `1` only when pytest exits 0.
 
-Hand batches in `tests/cases/` cover the reserve, the scan, priority isolation, multi-edge selection, a unilateral payment that blocks an offset, an offset that frees a later payment, and the amount, length, and id tie-breaks. Twenty-four further batches are drawn from seed `20261010` inside the verifier image. Their expected reports are computed by `tests/reference.py`, a second transcription of the rulebook. `/tests` is mode `0700`, so the unprivileged process cannot read that transcription or the tests. The only agent artifact uploaded is `/app/src/`.
-
-Reward is `1` only when pytest exits 0, otherwise `0`. Per-test results go to `/logs/verifier/ctrf.json`.
+The stored reports come from `tools/ref_np.py`, an offline numpy brute force over all subsets that shares no search code with the oracle. `tools/build_cases.py` regenerates all cases and also writes, for each of eleven single wrong readings of one rule (`tools/mutants.py`, `tools/ref_tie.py`), the two smallest batches that the wrong reading gets wrong, so each such reading fails at least two stored cases. A separate three-way check (oracle branch and bound, pure-Python brute force, numpy brute force) agreed on tens of thousands of random batches while the task was built. An independent scipy MILP with lexicographic tie-breaking agreed with the earlier bundle-only rules.
 
 ## Design notes
 
-The procedure is original. It is in the family of RTGS liquidity-saving mechanisms (unilateral funding, then a bilateral or trilateral offset), but the scan rule, the reserve exception, and the tie-break are specific to this rulebook so a memorized netting writeup does not settle the hidden batches.
+The procedure is original. It is in the family of RTGS liquidity-saving mechanisms (unilateral funding, then a multilateral offset), but the floors, ceilings, lots, fee, tie chain, and round structure are specific to this rulebook so a memorized netting writeup does not settle the hidden batches. The offset step is an exact optimization (the best closed, funded subset of payments), not a heuristic gridlock algorithm.
 
-The first draft specified the procedure only as "settle feasible cycles." That has more than one reading, so the rulebook now fixes the order of operations and includes four worked batches. Array order in the report is defined as insignificant so a correct engine is not failed for sorting. The oracle and the verifier transcription were checked against those worked batches by hand before the expected JSON was frozen. The checked-in engine still fails nine of the thirteen hand batches, which is what the no-op trial grades.
+### Iteration history (honest account)
 
-A likely way a strong model fails, if it fails, is to implement a plausible neighbor of the rulebook: restart the scan after each settlement, refuse offsets that pierce the reserve, or pick the lexicographically first cycle before comparing amounts. Those all clear some fixtures and fail others. This is an estimate from the shape of the rules, not a trial result. No model subscriptions were available in the environment that built this repo, so no `/run` or `/cheat` reward is recorded here.
+The task was hardened three times because strong models passed earlier versions. Details and job ids are in RESULTS.md.
+
+- `1.0.0`: the offset step was "best 2-cycle or 3-cycle". A smoke trial of codex `gpt-6.1-sol` (xhigh) and of terminus-2 `deepseek-flash` each scored reward 1 on their first trial. Too easy, so it was not submitted in that form.
+- `1.1.0`: the offset step became "best closed and funded bundle" (exact subset optimization), with size and time limits. A deepseek trial scored 0 but only because its solution imported scipy and numpy, which it had installed in the agent container and which are missing from the separate verifier image. That is an infrastructure-style failure, not a rulebook failure, so it does not count. The codex trial of that job was stopped before it finished.
+- `1.1.1`: the instruction and rulebook now say the grader has only the Python standard library. codex `gpt-6.1-sol` then passed its first trial (reward 1) with a 950-line exact branch-and-bound over a min-cost-flow relaxation. A strong exact solver was not enough, so scale was not the right lever.
+- `1.2.0`: the rulebook was rewritten as revision 3 so that exactness on several interacting rules, not only a fast solver, decides the reward: priority-dependent floors, creditor ceilings, priority-2 partial lots and queue order, an offset fee that counts in the funded test, a participant-count tie-break before the payment-count tie-break, and a round loop that restarts at priority 0. The verifier cases were extended with mutation-checked batches. The trials of this version are in RESULTS.md.
 
 ## Checks and trials
 
@@ -133,11 +136,11 @@ harbor run -p tasks/clearing-offset \
   -k 3
 ```
 
-`/cheat` is the same command with `-k 1` and `--extra-instruction-path` pointing at `docs/prompts/hack-trial-prompt.md` from `harbor-framework/terminal-bench`. `scripts/run-trials.sh` downloads that file.
+`/cheat` is the same command with `-k 1` and `--extra-instruction-path` pointing at `docs/prompts/hack-trial-prompt.md` from `harbor-framework/terminal-bench`. `scripts/run-trials.sh` downloads that file. The file is the official `docs/prompts/hack-trial-prompt.md` from `harbor-framework/terminal-bench` main, used verbatim.
 
 ### Current CI defaults
 
-`terminal-bench` `.github/harbor-run-defaults.yml` on main, as fetched on 2026-10-10, runs three trials of `claude-code` / `anthropic/claude-fable-5-1` at `reasoning_effort=max` (with `CLAUDE_CODE_MAX_OUTPUT_TOKENS=128000`) and `codex` / `openai/gpt-6-astra` at `reasoning_effort=xhigh`. A `/cheat` comment forces one attempt and prepends `docs/prompts/hack-trial-prompt.md`. The commands above follow the take-home substitution (gpt-6.1-sol plus DeepSeek V4.1 Flash) because there is no Claude subscription. Record the runs you actually execute.
+`terminal-bench` `.github/harbor-run-defaults.yml` on main, as fetched on 2026-10-10, runs three trials of `claude-code` / `anthropic/claude-fable-5-1` at `reasoning_effort=max` (with `CLAUDE_CODE_MAX_OUTPUT_TOKENS=128000`) and `codex` / `openai/gpt-6-astra` at `reasoning_effort=xhigh`. A `/cheat` comment forces one attempt and prepends `docs/prompts/hack-trial-prompt.md`. The assignment text names `gpt-6.1-sol` for codex, which differs from the `gpt-6-astra` default in that file; the commands above follow the assignment text and the take-home substitution (gpt-6.1-sol plus DeepSeek V4.1 Flash) because there is no Claude subscription. Record the runs you actually execute.
 
 ## Layout
 
@@ -148,7 +151,8 @@ tasks/clearing-offset/
   README.md
   environment/          # agent image: buggy engine, rulebook, four fixtures
   solution/             # oracle engine installed by solve.sh
-  tests/                # separate verifier image, cases, reference transcription
+  tests/                # separate verifier image, 64 stored cases, brute-force transcription
+tools/                  # offline: case builder, numpy brute force, mutation switches
 scripts/run-trials.sh
 scripts/codex.config.toml
 RESULTS.md
