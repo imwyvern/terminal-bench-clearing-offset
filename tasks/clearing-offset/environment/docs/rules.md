@@ -72,7 +72,7 @@ The next round starts again at priority 0, whatever priority acted. A round that
 
 ## Limits
 
-A batch has at most 24 participants and at most 64 payments. `python -m lumen.settle` must finish every valid batch within 5 seconds on one CPU core, using only the Python 3.12 standard library plus the code in `/app/src`. Third-party packages installed in the working container are not available to the grader. The winning bundle is not necessarily a single cycle and a batch can hold far more candidate bundles than can be listed one by one.
+A batch has at most 24 participants and at most 64 payments. `python -m lumen.settle` must finish every valid batch within 5 seconds on one CPU core, using only the Python 3.12 standard library plus pure Python source in `/app/src`. Third-party packages installed in the working container are not available to the grader. The grader rejects native code: no shared libraries, executables, or other compiled files under `/app/src`, no `ctypes`, `cffi`, `subprocess`, `multiprocessing`, or `importlib` imports, no calls to `exec`, `eval`, `__import__`, `os.system`, `os.popen`, `os.exec*`, `os.spawn*`, `os.fork*`, or `os.posix_spawn*`, and the graded process may not start other processes or threads. The winning bundle is not necessarily a single cycle and a batch can hold far more candidate bundles than can be listed one by one.
 
 ## Worked batches
 
