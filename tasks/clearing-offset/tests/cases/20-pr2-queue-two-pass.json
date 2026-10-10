@@ -1,0 +1,64 @@
+{
+ "note": "hand batch",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 30,
+    "reserve": 5,
+    "ceiling": 100
+   },
+   {
+    "id": "B",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 100
+   },
+   {
+    "id": "C",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 100
+   }
+  ],
+  "payments": [
+   {
+    "id": "p1",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 9,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "p2",
+    "debtor": "A",
+    "creditor": "C",
+    "amount": 20,
+    "priority": 2,
+    "seq": 2
+   },
+   {
+    "id": "p3",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 5,
+    "priority": 2,
+    "seq": 3
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "p1",
+   "p2",
+   "p3"
+  ],
+  "unsettled": [],
+  "balances": {
+   "A": 6,
+   "B": 4,
+   "C": 20
+  }
+ }
+}

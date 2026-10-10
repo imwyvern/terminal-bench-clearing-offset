@@ -1,0 +1,146 @@
+{
+ "note": "random mid-size batch, seed 20261014",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 35,
+    "reserve": 9,
+    "ceiling": 1035
+   },
+   {
+    "id": "B",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 1000
+   },
+   {
+    "id": "C",
+    "collateral": 4,
+    "reserve": 0,
+    "ceiling": 9
+   }
+  ],
+  "payments": [
+   {
+    "id": "q00",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 4,
+    "priority": 1,
+    "seq": 5
+   },
+   {
+    "id": "q01",
+    "debtor": "B",
+    "creditor": "C",
+    "amount": 12,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "q02",
+    "debtor": "B",
+    "creditor": "C",
+    "amount": 10,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "q03",
+    "debtor": "A",
+    "creditor": "C",
+    "amount": 6,
+    "priority": 2,
+    "seq": 4
+   },
+   {
+    "id": "q04",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 5,
+    "priority": 0,
+    "seq": 1
+   },
+   {
+    "id": "q05",
+    "debtor": "C",
+    "creditor": "B",
+    "amount": 25,
+    "priority": 0,
+    "seq": 3
+   },
+   {
+    "id": "p06",
+    "debtor": "B",
+    "creditor": "C",
+    "amount": 24,
+    "priority": 2,
+    "seq": 3
+   },
+   {
+    "id": "P07",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 18,
+    "priority": 2,
+    "seq": 3
+   },
+   {
+    "id": "P08",
+    "debtor": "A",
+    "creditor": "C",
+    "amount": 21,
+    "priority": 2,
+    "seq": 5
+   },
+   {
+    "id": "p09",
+    "debtor": "B",
+    "creditor": "C",
+    "amount": 29,
+    "priority": 2,
+    "seq": 8
+   },
+   {
+    "id": "p10",
+    "debtor": "C",
+    "creditor": "B",
+    "amount": 2,
+    "priority": 0,
+    "seq": 4
+   },
+   {
+    "id": "q11",
+    "debtor": "B",
+    "creditor": "C",
+    "amount": 18,
+    "priority": 2,
+    "seq": 3
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "q04",
+   "p10",
+   "q00"
+  ],
+  "unsettled": [
+   "q05",
+   "q02",
+   "q01",
+   "P07",
+   "p06",
+   "q11",
+   "q03",
+   "P08",
+   "p09"
+  ],
+  "balances": {
+   "A": 31,
+   "B": 1,
+   "C": 7
+  }
+ }
+}

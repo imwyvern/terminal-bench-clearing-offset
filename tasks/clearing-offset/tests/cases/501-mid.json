@@ -1,0 +1,160 @@
+{
+ "note": "random mid-size batch, seed 20261014",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 10,
+    "reserve": 4,
+    "ceiling": 25
+   },
+   {
+    "id": "B",
+    "collateral": 4,
+    "reserve": 1,
+    "ceiling": 1004
+   },
+   {
+    "id": "C",
+    "collateral": 10,
+    "reserve": 5,
+    "ceiling": 10
+   },
+   {
+    "id": "D",
+    "collateral": 35,
+    "reserve": 19,
+    "ceiling": 50
+   },
+   {
+    "id": "E",
+    "collateral": 35,
+    "reserve": 3,
+    "ceiling": 1035
+   }
+  ],
+  "payments": [
+   {
+    "id": "q00",
+    "debtor": "A",
+    "creditor": "C",
+    "amount": 10,
+    "priority": 0,
+    "seq": 0
+   },
+   {
+    "id": "q01",
+    "debtor": "D",
+    "creditor": "B",
+    "amount": 9,
+    "priority": 0,
+    "seq": 0
+   },
+   {
+    "id": "P02",
+    "debtor": "D",
+    "creditor": "E",
+    "amount": 5,
+    "priority": 1,
+    "seq": 2
+   },
+   {
+    "id": "q03",
+    "debtor": "E",
+    "creditor": "B",
+    "amount": 6,
+    "priority": 0,
+    "seq": 9
+   },
+   {
+    "id": "q04",
+    "debtor": "A",
+    "creditor": "C",
+    "amount": 10,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "P05",
+    "debtor": "A",
+    "creditor": "D",
+    "amount": 13,
+    "priority": 2,
+    "seq": 5
+   },
+   {
+    "id": "q06",
+    "debtor": "A",
+    "creditor": "D",
+    "amount": 3,
+    "priority": 0,
+    "seq": 5
+   },
+   {
+    "id": "q07",
+    "debtor": "B",
+    "creditor": "E",
+    "amount": 28,
+    "priority": 1,
+    "seq": 3
+   },
+   {
+    "id": "p08",
+    "debtor": "A",
+    "creditor": "E",
+    "amount": 12,
+    "priority": 2,
+    "seq": 3
+   },
+   {
+    "id": "q09",
+    "debtor": "D",
+    "creditor": "E",
+    "amount": 11,
+    "priority": 0,
+    "seq": 8
+   },
+   {
+    "id": "q10",
+    "debtor": "E",
+    "creditor": "C",
+    "amount": 29,
+    "priority": 0,
+    "seq": 0
+   },
+   {
+    "id": "p11",
+    "debtor": "C",
+    "creditor": "B",
+    "amount": 15,
+    "priority": 1,
+    "seq": 1
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "q01",
+   "q06",
+   "q09",
+   "q03"
+  ],
+  "unsettled": [
+   "q00",
+   "q10",
+   "p11",
+   "P02",
+   "q07",
+   "q04",
+   "p08",
+   "P05"
+  ],
+  "balances": {
+   "A": 7,
+   "B": 19,
+   "C": 10,
+   "D": 18,
+   "E": 40
+  }
+ }
+}

@@ -1,0 +1,58 @@
+{
+ "note": "smallest batch found on which one wrong reading of one rule differs",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 20,
+    "reserve": 0,
+    "ceiling": 23
+   },
+   {
+    "id": "B",
+    "collateral": 12,
+    "reserve": 12,
+    "ceiling": 22
+   }
+  ],
+  "payments": [
+   {
+    "id": "m1",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 9,
+    "priority": 1,
+    "seq": 1
+   },
+   {
+    "id": "m2",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 9,
+    "priority": 2,
+    "seq": 2
+   },
+   {
+    "id": "m3",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 4,
+    "priority": 0,
+    "seq": 3
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "m3"
+  ],
+  "unsettled": [
+   "m1",
+   "m2"
+  ],
+  "balances": {
+   "A": 11,
+   "B": 21
+  }
+ }
+}

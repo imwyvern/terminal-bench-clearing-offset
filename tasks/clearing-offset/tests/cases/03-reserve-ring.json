@@ -5,12 +5,14 @@
    {
     "id": "A",
     "collateral": 10,
-    "reserve": 8
+    "reserve": 8,
+    "ceiling": 100
    },
    {
     "id": "B",
-    "collateral": 0,
-    "reserve": 0
+    "collateral": 1,
+    "reserve": 0,
+    "ceiling": 100
    }
   ],
   "payments": [
@@ -19,7 +21,7 @@
     "debtor": "A",
     "creditor": "B",
     "amount": 5,
-    "priority": 0,
+    "priority": 1,
     "seq": 1
    },
    {
@@ -27,7 +29,7 @@
     "debtor": "B",
     "creditor": "A",
     "amount": 5,
-    "priority": 0,
+    "priority": 1,
     "seq": 2
    }
   ]
@@ -39,7 +41,7 @@
   ],
   "unsettled": [],
   "balances": {
-   "A": 10,
+   "A": 9,
    "B": 0
   }
  }

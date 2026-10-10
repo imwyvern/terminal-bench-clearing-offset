@@ -5,17 +5,20 @@
    {
     "id": "A",
     "collateral": 0,
-    "reserve": 0
+    "reserve": 0,
+    "ceiling": 100
    },
    {
     "id": "B",
     "collateral": 5,
-    "reserve": 0
+    "reserve": 0,
+    "ceiling": 100
    },
    {
     "id": "C",
     "collateral": 0,
-    "reserve": 0
+    "reserve": 0,
+    "ceiling": 100
    }
   ],
   "payments": [

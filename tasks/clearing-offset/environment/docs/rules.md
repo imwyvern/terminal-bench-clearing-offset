@@ -6,7 +6,7 @@ This document is the normative settlement procedure for a valid batch. A report 
 
 A batch is a JSON object with `participants` and `payments`.
 
-Each participant has `id` (string), `collateral` (integer greater than or equal to 0), and `reserve` (integer, `0 <= reserve <= collateral`).
+Each participant has `id` (string), `collateral` (integer greater than or equal to 0), `reserve` (integer, `0 <= reserve <= collateral`), and `ceiling` (integer, `ceiling >= collateral`).
 
 Each payment has `id` (string), `debtor` (participant id), `creditor` (a different participant id), `amount` (integer greater than 0), `priority` (integer 0, 1, or 2), and `seq` (integer).
 
@@ -18,30 +18,57 @@ The engine is only required to follow this procedure on batches that already mee
 
 `python -m lumen.settle BATCH.json` reads that file and writes one JSON object to standard output, then exits 0. The object has exactly three keys.
 
-- `settled`: array of payment ids that the procedure settles.
-- `unsettled`: array of every other payment id.
+- `settled`: array of payment ids that the procedure settles in full.
+- `unsettled`: array of every other payment id, including a payment that was only partly paid.
 - `balances`: object mapping every participant id to that participant's ending integer balance.
 
-Starting balance of each participant is `collateral`. Settling a payment subtracts `amount` from the debtor and adds `amount` to the creditor. An offset settles its payments at the same time by applying the sum of those changes. Nothing else changes a balance. The sum of ending balances equals the sum of collateral.
+Starting balance of each participant is `collateral`. A payment moves its amount from the debtor to the creditor. Nothing else changes a balance except the offset fee below. All amounts, balances, and fees are integers. Integer division is floor division.
 
-## Definitions
+## Unilateral settlement
 
-A payment is affordable for a unilateral settlement when `balance[debtor] - amount >= reserve[debtor]` using the balances at the moment it is considered.
+A payment's `floor` is a number that the debtor's balance must not go below. For priority 0 the floor is `reserve // 2` of the debtor. For priority 1 and priority 2 the floor is the debtor's full `reserve`.
 
-A bundle, for the current priority, is a non-empty set `S` of unsettled payments of that priority that satisfies both conditions below. A bundle may hold any number of payments, may hold several payments between the same ordered pair of participants, and may be the union of several cycles. Payments of another priority are never part of it.
+A payment is affordable when both of these hold, using the balances at the moment it is considered.
+
+- `balance[debtor] - amount >= floor`.
+- `balance[creditor] + amount <= ceiling[creditor]`.
+
+A unilateral settlement of an affordable payment moves its whole amount and the payment is settled.
+
+Partial settlement applies to priority 2 only. When a priority 2 payment is not affordable, let `x = min(amount, balance[debtor] - reserve[debtor], ceiling[creditor] - balance[creditor])`. If `x >= 5`, move `x - x % 5` (the largest multiple of 5 not above `x`) now. The payment stays unsettled with the same id and seq, and its `amount` is reduced by what moved. If `x < 5` nothing moves. A priority 0 or priority 1 payment is never split.
+
+The queue of a priority is its unsettled payments. Within one pass the queue is ordered as follows, and the order is computed once at the start of the pass and does not change during the pass.
+
+- Priority 0 and 1: increasing `(seq, id)`.
+- Priority 2: larger `amount` first, using the amounts at the start of the pass, then increasing `(seq, id)`.
+
+A unilateral phase for a priority is a sequence of passes. A pass walks the queue once. For each payment in turn it applies full settlement if affordable, otherwise partial settlement if allowed. It continues with the next payment in the same pass and never returns to an earlier payment during that pass. If a pass moved any money, another pass starts from the then-current queue. The phase ends when a full pass moves nothing. The phase "acted" if any pass moved money.
+
+## Bundles
+
+A bundle, for one priority, is a non-empty set `S` of unsettled payments of that priority (using their current amounts) that satisfies all of these. A bundle may hold any number of payments, may hold several payments between the same ordered pair of participants, and may be the union of several cycles. Payments of another priority are never part of it.
 
 1. Closed. Every participant that is the debtor of a payment in `S` is also the creditor of at least one payment in `S`.
-2. Funded. Let `net(p)` be the amount `p` receives from payments in `S` minus the amount `p` pays in `S`. Using balances from before the bundle, `balance[p] + net(p) >= 0` for every participant `p`. `reserve` does not apply to this test. A participant's balance may finish below `reserve` because of an offset.
+2. Funded. For a participant `p`, let `in(p)` be the amount `p` receives from payments in `S`, `out(p)` the amount `p` pays in `S`, and `fee(p) = (out(p) + 19) // 20` (5 percent of `out(p)`, rounded up; zero when `out(p)` is zero). Using balances from before the bundle, `0 <= balance[p] + in(p) - out(p) - fee(p) <= ceiling[p]` for every participant `p`. `reserve` does not apply to this test. A participant's balance may finish below `reserve` because of an offset.
 
-The score of a bundle is compared in this order. A larger sum of payment amounts wins. If the sums are equal, the bundle with more payments wins. If the counts are also equal, sort the payment ids of each bundle in increasing Unicode code-point order, then compare the two sorted lists from the first element onward; the bundle with the smaller id at the first position where they differ wins. Two different bundles never have the same sorted id list, so there is exactly one winning bundle whenever any bundle exists.
+Settling a bundle moves every payment in it at the same time and then subtracts `fee(p)` from each participant `p` once. Fees leave the system; ending balances do not sum to the collateral total.
+
+The score of a bundle is compared in this order.
+
+1. Larger sum of payment amounts wins.
+2. If the sums are equal, the bundle that touches fewer distinct participants (debtors and creditors together) wins.
+3. If still equal, the bundle with more payments wins.
+4. If still equal, sort the payment ids of each bundle in increasing Unicode code-point order, then compare the two sorted lists from the first element onward; the bundle with the smaller id at the first position where they differ wins. Two different bundles never have the same sorted id list, so there is exactly one winning bundle whenever any bundle exists.
 
 ## Procedure
 
-Process priority 0 to completion, then priority 1, then priority 2. Payments of another priority are ignored until their own priority. For the current priority, repeat the following until both steps make no change.
+Repeat the following round until a round settles nothing. In a round, take priorities in the order 0, 1, 2 and stop the round at the first priority that acts.
 
-1. Unilateral passes. Take the unsettled payments of this priority in increasing `(seq, id)` order. Walk that list once. When a payment is affordable, settle it immediately and continue later in the same list. Do not return to an earlier payment during that pass. If the pass settled at least one payment, start another pass from the current unsettled list. Stop the unilateral phase when a full pass settles nothing.
+1. Run the unilateral phase for the priority. If it acted, the round ends here.
+2. Otherwise look for the winning bundle for that priority among its unsettled payments. If one exists, settle it, subtract the fees, and the round ends here.
+3. Otherwise go on to the next priority.
 
-2. One offset. If any bundle exists, settle every payment of the single winning bundle at the same time, then go back to step 1. If none exists, this priority is finished.
+The next round starts again at priority 0, whatever priority acted. A round that reaches the end of priority 2 without acting ends the procedure.
 
 ## Limits
 
@@ -49,14 +76,18 @@ A batch has at most 24 participants and at most 64 payments. `python -m lumen.se
 
 ## Worked batches
 
-Participants are written as `id collateral/reserve`. Payments are `id debtor->creditor amount priority seq`.
+Participants are written as `id collateral/reserve/ceiling`. Payments are `id debtor->creditor amount priority seq`.
 
-Ring, with no starting cash. `A 0/0`, `B 0/0`, `C 0/0`. Payments `p1 A->B 10` priority 0 seq 1, `p2 B->C 10` priority 0 seq 2, `p3 C->A 10` priority 0 seq 3. Nothing is affordable. The three payments form a closed set with net zero for everyone, so it is a bundle and all three settle. Balances stay 0.
+Ring, with fees. `A 1/0/100`, `B 1/0/100`, `C 1/0/100`. Payments `p1 A->B 10` priority 0 seq 1, `p2 B->C 10` priority 0 seq 2, `p3 C->A 10` priority 0 seq 3. Nothing is affordable (each debtor has 1). The three payments form a closed set. Each participant pays and receives 10, the fee is `(10 + 19) // 20 = 1`, and each ends at `1 + 10 - 10 - 1 = 0`, which is funded. All three settle. Balances are 0, 0, 0. With a starting balance of 0 the fee would make the ring unfunded.
 
-Scan order. `A 0/0`, `B 5/0`, `C 0/0`. Payments `p1 A->C 5` seq 1, `p2 B->A 5` seq 2, `p3 A->B 5` seq 3, all priority 0. The first pass skips `p1`, settles `p2` (A becomes 5), and then settles `p3` in that same pass (A returns to 0 and B returns to 5). The next pass still cannot settle `p1`. No bundle remains: `p1` alone is not closed, because A is its debtor and no remaining payment pays A. Settled: `p2`, `p3`. Balances: A 0, B 5, C 0. Restarting the list after `p2` would settle `p1` and is not this procedure.
+Scan order. `A 0/0/100`, `B 5/0/100`, `C 0/0/100`. Payments `p1 A->C 5` seq 1, `p2 B->A 5` seq 2, `p3 A->B 5` seq 3, all priority 0. The first pass skips `p1`, settles `p2` (A becomes 5), and then settles `p3` in that same pass (A returns to 0 and B returns to 5). The next pass still cannot settle `p1`. No bundle remains: `p1` alone is not closed, because A is its debtor and no remaining payment pays A. Settled: `p2`, `p3`. Balances: A 0, B 5, C 0. Restarting the list after `p2` would settle `p1` and is not this procedure.
 
-Reserve does not bind the offset, and the id list breaks the tie. `A 10/8`, `B 0/0`, `C 0/0`. Payments `p1 A->B 9` seq 1, `p2 B->A 1` seq 2, `p3 A->C 9` seq 3, `p4 C->A 1` seq 4, all priority 0. Unilateral settlement of `p1` would leave A at 1, which is below the reserve 8, so the unilateral phase settles nothing. The bundles are `{p1, p2}` and `{p3, p4}`, each with sum 10 and two payments. `{p1, p2, p3, p4}` is closed but not funded: A would need 18 and receives only 2, so `balance + net` is -6. The reserve is ignored for the two-payment bundles (A ends at 2). The sorted id lists are `[p1, p2]` and `[p3, p4]`, and `p1 < p3`, so `p1` and `p2` settle and `p3` and `p4` stay unsettled. Balances: A 2, B 8, C 0.
+Floor and ceiling. `A 10/8/100`, `B 8/0/10`, `C 0/0/100`. `p1 A->C 5` priority 0 seq 1 settles: the priority 0 floor is `8 // 2 = 4` and `10 - 5 = 5 >= 4`. A is at 5 and C is at 5, and the round ends. In the next round priority 0 has nothing left, so priority 1 runs. `p2 A->B 3` priority 1 seq 2 is not affordable: the priority 1 floor is 8 and `5 - 3 = 2 < 8`. `p3 B->C 4` priority 1 seq 3 is affordable for B (floor 0) and C has room, so it settles: B is at 4 and C is at 9. `p4 C->B 9` priority 1 seq 4: C could pay (`9 - 9 = 0 >= 0`), but `4 + 9 = 13 > 10`, the ceiling of B, so it is not affordable. Settled: `p1`, `p3`. Balances: A 5, B 4, C 9.
 
-More payments win a tie in the sum. `A 0/0`, `B 4/4`, `C 0/0`. Payments `p1 A->B 4`, `p2 B->A 8`, `p3 B->C 4`, `p4 C->A 4`, all priority 0 with seq 1, 2, 3, 4. Unilateral settlement settles nothing (A has 0, and B would fall below its reserve 4). `{p1, p2}` is a bundle with sum 12: B ends at 0, which is allowed. `{p1, p3, p4}` is a bundle with sum 12 and nets of zero. The sums tie, `{p1, p3, p4}` has more payments, so it wins. `{p1, p2, p3, p4}` has B at `4 + 4 - 8 - 4 = -4`, which is not funded. `p1`, `p3`, `p4` settle. Balances: A 0, B 4, C 0. `p2` stays unsettled.
+Ceiling blocks a payment. `A 10/0/100`, `B 8/0/10`. `p1 A->B 5` priority 0: A can afford it, but `8 + 5 = 13 > 10`, so it is not affordable and never settles (a lone payment is not a bundle). Balances stay A 10, B 8.
 
-Priority finishes before a later queue. `A 6/0`, `B 0/0`, `C 0/0`. `p1 A->C 6` is priority 1 seq 1. `p2 A->B 10` priority 0 seq 2 and `p3 B->A 4` priority 0 seq 3. Priority 0 has no affordable payment. `{p2, p3}` is a bundle: A nets -6 and has 6. So `p2` and `p3` settle and A is left at 0. Priority 1 then cannot settle `p1`. Settled: `p2`, `p3`. Balances: A 0, B 6, C 0.
+Partial settlement and queue order. `A 12/2/100`, `B 0/0/100`. Payments `p1 A->B 14` priority 2 seq 1 and `p2 A->B 6` priority 2 seq 0. The queue is `p1` then `p2` (larger amount first). `p1` is not affordable (`12 - 14 < 2`), `x = min(14, 12 - 2, 100) = 10`, so 10 moves: A is at 2 and `p1` stays unsettled with amount 4. `p2` is not affordable (`2 - 6 < 2`), `x = 0`, nothing moves. The next pass moves nothing. Balances: A 2, B 10. Both payments are unsettled. If `p2` had gone first it would have settled in full.
+
+The tie chain. `A 2/2/100`, `B 8/8/100`, `C 2/2/100`. Payments `p1 A->B 10`, `p2 A->C 6`, `p3 C->B 4`, `p4 B->A 10`, all priority 1 with seq 1, 2, 3, 4. Nothing is affordable. Two bundles have the best sum 20: `{p1, p4}` touches two participants (A, B) and `{p2, p3, p4}` touches three (A, B, C). Fewer participants wins, even though the second bundle has more payments. `{p1, p4}` settles with fees of 1 for A and 1 for B (A ends at `2 + 10 - 10 - 1 = 1`, B at `8 + 10 - 10 - 1 = 7`). Balances: A 1, B 7, C 2. `p2` and `p3` stay unsettled and nothing more can settle.
+
+Priorities are not finished once and for all. `A 0/0/100`, `B 10/0/100`, `C 0/0/100`. `p0 C->A 10` is priority 0 seq 5 and `p1 B->C 10` is priority 1 seq 1. Round 1: priority 0 cannot act (C has nothing) and has no bundle, so priority 1 acts and `p1` settles (C has 10). Round 2 starts at priority 0 and `p0` is now affordable. Settled: `p0`, `p1`. Balances: A 10, B 0, C 0.

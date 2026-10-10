@@ -1,0 +1,497 @@
+{
+ "note": "gridlock batch, seed 20261015",
+ "batch": {
+  "participants": [
+   {
+    "id": "A0",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 25
+   },
+   {
+    "id": "A1",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 60
+   },
+   {
+    "id": "A2",
+    "collateral": 40,
+    "reserve": 10,
+    "ceiling": 65
+   },
+   {
+    "id": "A3",
+    "collateral": 20,
+    "reserve": 19,
+    "ceiling": 10020
+   },
+   {
+    "id": "A4",
+    "collateral": 10,
+    "reserve": 4,
+    "ceiling": 70
+   },
+   {
+    "id": "A5",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 10
+   },
+   {
+    "id": "B0",
+    "collateral": 80,
+    "reserve": 28,
+    "ceiling": 105
+   },
+   {
+    "id": "B1",
+    "collateral": 5,
+    "reserve": 5,
+    "ceiling": 5
+   },
+   {
+    "id": "B2",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 0
+   },
+   {
+    "id": "B3",
+    "collateral": 40,
+    "reserve": 31,
+    "ceiling": 65
+   },
+   {
+    "id": "B4",
+    "collateral": 5,
+    "reserve": 2,
+    "ceiling": 30
+   },
+   {
+    "id": "B5",
+    "collateral": 10,
+    "reserve": 1,
+    "ceiling": 10
+   }
+  ],
+  "payments": [
+   {
+    "id": "t030",
+    "debtor": "B4",
+    "creditor": "B1",
+    "amount": 37,
+    "priority": 1,
+    "seq": 16
+   },
+   {
+    "id": "t036",
+    "debtor": "B3",
+    "creditor": "B0",
+    "amount": 35,
+    "priority": 1,
+    "seq": 36
+   },
+   {
+    "id": "t038",
+    "debtor": "B1",
+    "creditor": "B0",
+    "amount": 7,
+    "priority": 1,
+    "seq": 0
+   },
+   {
+    "id": "t006",
+    "debtor": "A5",
+    "creditor": "A0",
+    "amount": 10,
+    "priority": 0,
+    "seq": 28
+   },
+   {
+    "id": "t029",
+    "debtor": "B4",
+    "creditor": "B0",
+    "amount": 9,
+    "priority": 1,
+    "seq": 26
+   },
+   {
+    "id": "t034",
+    "debtor": "B0",
+    "creditor": "B1",
+    "amount": 18,
+    "priority": 1,
+    "seq": 24
+   },
+   {
+    "id": "t002",
+    "debtor": "A2",
+    "creditor": "A5",
+    "amount": 22,
+    "priority": 0,
+    "seq": 23
+   },
+   {
+    "id": "t021",
+    "debtor": "B5",
+    "creditor": "B4",
+    "amount": 4,
+    "priority": 1,
+    "seq": 13
+   },
+   {
+    "id": "t012",
+    "debtor": "A1",
+    "creditor": "A4",
+    "amount": 35,
+    "priority": 0,
+    "seq": 36
+   },
+   {
+    "id": "t000",
+    "debtor": "A3",
+    "creditor": "A4",
+    "amount": 10,
+    "priority": 0,
+    "seq": 31
+   },
+   {
+    "id": "t008",
+    "debtor": "A3",
+    "creditor": "A2",
+    "amount": 31,
+    "priority": 0,
+    "seq": 40
+   },
+   {
+    "id": "t017",
+    "debtor": "A4",
+    "creditor": "A5",
+    "amount": 17,
+    "priority": 0,
+    "seq": 21
+   },
+   {
+    "id": "t005",
+    "debtor": "A0",
+    "creditor": "A2",
+    "amount": 19,
+    "priority": 0,
+    "seq": 33
+   },
+   {
+    "id": "t022",
+    "debtor": "B4",
+    "creditor": "B3",
+    "amount": 12,
+    "priority": 1,
+    "seq": 38
+   },
+   {
+    "id": "t018",
+    "debtor": "A0",
+    "creditor": "A1",
+    "amount": 9,
+    "priority": 0,
+    "seq": 36
+   },
+   {
+    "id": "t010",
+    "debtor": "A0",
+    "creditor": "A1",
+    "amount": 19,
+    "priority": 0,
+    "seq": 12
+   },
+   {
+    "id": "t043",
+    "debtor": "B1",
+    "creditor": "B2",
+    "amount": 40,
+    "priority": 1,
+    "seq": 7
+   },
+   {
+    "id": "t025",
+    "debtor": "B4",
+    "creditor": "B5",
+    "amount": 26,
+    "priority": 1,
+    "seq": 40
+   },
+   {
+    "id": "t039",
+    "debtor": "B4",
+    "creditor": "B5",
+    "amount": 21,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "t026",
+    "debtor": "B0",
+    "creditor": "B1",
+    "amount": 39,
+    "priority": 1,
+    "seq": 9
+   },
+   {
+    "id": "t041",
+    "debtor": "B0",
+    "creditor": "B5",
+    "amount": 28,
+    "priority": 1,
+    "seq": 37
+   },
+   {
+    "id": "t035",
+    "debtor": "B4",
+    "creditor": "B5",
+    "amount": 23,
+    "priority": 1,
+    "seq": 32
+   },
+   {
+    "id": "t028",
+    "debtor": "B4",
+    "creditor": "B0",
+    "amount": 4,
+    "priority": 1,
+    "seq": 29
+   },
+   {
+    "id": "t032",
+    "debtor": "B5",
+    "creditor": "B0",
+    "amount": 40,
+    "priority": 1,
+    "seq": 30
+   },
+   {
+    "id": "t015",
+    "debtor": "A1",
+    "creditor": "A5",
+    "amount": 20,
+    "priority": 0,
+    "seq": 17
+   },
+   {
+    "id": "t011",
+    "debtor": "A2",
+    "creditor": "A4",
+    "amount": 40,
+    "priority": 0,
+    "seq": 18
+   },
+   {
+    "id": "t009",
+    "debtor": "A3",
+    "creditor": "A4",
+    "amount": 23,
+    "priority": 0,
+    "seq": 11
+   },
+   {
+    "id": "t016",
+    "debtor": "A1",
+    "creditor": "A2",
+    "amount": 12,
+    "priority": 0,
+    "seq": 20
+   },
+   {
+    "id": "t004",
+    "debtor": "A0",
+    "creditor": "A2",
+    "amount": 15,
+    "priority": 2,
+    "seq": 16
+   },
+   {
+    "id": "t033",
+    "debtor": "B4",
+    "creditor": "B3",
+    "amount": 16,
+    "priority": 1,
+    "seq": 29
+   },
+   {
+    "id": "t023",
+    "debtor": "B5",
+    "creditor": "B1",
+    "amount": 5,
+    "priority": 1,
+    "seq": 29
+   },
+   {
+    "id": "t027",
+    "debtor": "B0",
+    "creditor": "B1",
+    "amount": 31,
+    "priority": 1,
+    "seq": 18
+   },
+   {
+    "id": "t040",
+    "debtor": "B1",
+    "creditor": "B5",
+    "amount": 22,
+    "priority": 1,
+    "seq": 15
+   },
+   {
+    "id": "t031",
+    "debtor": "B1",
+    "creditor": "B4",
+    "amount": 13,
+    "priority": 1,
+    "seq": 36
+   },
+   {
+    "id": "t042",
+    "debtor": "B3",
+    "creditor": "B1",
+    "amount": 11,
+    "priority": 1,
+    "seq": 9
+   },
+   {
+    "id": "t001",
+    "debtor": "A3",
+    "creditor": "A4",
+    "amount": 10,
+    "priority": 0,
+    "seq": 24
+   },
+   {
+    "id": "t019",
+    "debtor": "A5",
+    "creditor": "A0",
+    "amount": 14,
+    "priority": 0,
+    "seq": 22
+   },
+   {
+    "id": "t020",
+    "debtor": "A1",
+    "creditor": "A3",
+    "amount": 14,
+    "priority": 0,
+    "seq": 20
+   },
+   {
+    "id": "t024",
+    "debtor": "B4",
+    "creditor": "B5",
+    "amount": 28,
+    "priority": 1,
+    "seq": 12
+   },
+   {
+    "id": "t013",
+    "debtor": "A3",
+    "creditor": "A5",
+    "amount": 9,
+    "priority": 0,
+    "seq": 15
+   },
+   {
+    "id": "t007",
+    "debtor": "A0",
+    "creditor": "A1",
+    "amount": 29,
+    "priority": 0,
+    "seq": 16
+   },
+   {
+    "id": "t014",
+    "debtor": "A2",
+    "creditor": "A0",
+    "amount": 32,
+    "priority": 0,
+    "seq": 35
+   },
+   {
+    "id": "t037",
+    "debtor": "B2",
+    "creditor": "B0",
+    "amount": 32,
+    "priority": 1,
+    "seq": 14
+   },
+   {
+    "id": "t003",
+    "debtor": "A4",
+    "creditor": "A2",
+    "amount": 37,
+    "priority": 0,
+    "seq": 36
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "t009",
+   "t013",
+   "t007",
+   "t011",
+   "t016",
+   "t020",
+   "t019",
+   "t002",
+   "t006",
+   "t005",
+   "t014",
+   "t003",
+   "t038",
+   "t026",
+   "t021",
+   "t040",
+   "t023",
+   "t028",
+   "t033",
+   "t032",
+   "t031",
+   "t036",
+   "t041"
+  ],
+  "unsettled": [
+   "t010",
+   "t015",
+   "t017",
+   "t001",
+   "t000",
+   "t012",
+   "t018",
+   "t008",
+   "t043",
+   "t042",
+   "t024",
+   "t037",
+   "t030",
+   "t027",
+   "t034",
+   "t029",
+   "t035",
+   "t022",
+   "t025",
+   "t039",
+   "t004"
+  ],
+  "balances": {
+   "A0": 0,
+   "A1": 1,
+   "A2": 14,
+   "A3": 0,
+   "A4": 34,
+   "A5": 5,
+   "B0": 95,
+   "B1": 4,
+   "B2": 0,
+   "B3": 19,
+   "B4": 1,
+   "B5": 8
+  }
+ }
+}

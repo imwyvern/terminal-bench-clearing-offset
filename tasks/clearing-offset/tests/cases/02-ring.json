@@ -4,18 +4,21 @@
   "participants": [
    {
     "id": "A",
-    "collateral": 0,
-    "reserve": 0
+    "collateral": 1,
+    "reserve": 0,
+    "ceiling": 100
    },
    {
     "id": "B",
-    "collateral": 0,
-    "reserve": 0
+    "collateral": 1,
+    "reserve": 0,
+    "ceiling": 100
    },
    {
     "id": "C",
-    "collateral": 0,
-    "reserve": 0
+    "collateral": 1,
+    "reserve": 0,
+    "ceiling": 100
    }
   ],
   "payments": [

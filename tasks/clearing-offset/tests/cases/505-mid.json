@@ -1,0 +1,144 @@
+{
+ "note": "random mid-size batch, seed 20261014",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 1000
+   },
+   {
+    "id": "B",
+    "collateral": 10,
+    "reserve": 7,
+    "ceiling": 15
+   },
+   {
+    "id": "C",
+    "collateral": 20,
+    "reserve": 4,
+    "ceiling": 25
+   },
+   {
+    "id": "D",
+    "collateral": 20,
+    "reserve": 12,
+    "ceiling": 1020
+   }
+  ],
+  "payments": [
+   {
+    "id": "p00",
+    "debtor": "C",
+    "creditor": "B",
+    "amount": 10,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "q01",
+    "debtor": "B",
+    "creditor": "C",
+    "amount": 3,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "p02",
+    "debtor": "A",
+    "creditor": "D",
+    "amount": 16,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "p03",
+    "debtor": "D",
+    "creditor": "C",
+    "amount": 10,
+    "priority": 1,
+    "seq": 5
+   },
+   {
+    "id": "q04",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 8,
+    "priority": 2,
+    "seq": 2
+   },
+   {
+    "id": "P05",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 6,
+    "priority": 1,
+    "seq": 3
+   },
+   {
+    "id": "P06",
+    "debtor": "C",
+    "creditor": "B",
+    "amount": 27,
+    "priority": 1,
+    "seq": 1
+   },
+   {
+    "id": "p07",
+    "debtor": "D",
+    "creditor": "C",
+    "amount": 19,
+    "priority": 1,
+    "seq": 4
+   },
+   {
+    "id": "q08",
+    "debtor": "C",
+    "creditor": "A",
+    "amount": 4,
+    "priority": 2,
+    "seq": 2
+   },
+   {
+    "id": "P09",
+    "debtor": "D",
+    "creditor": "B",
+    "amount": 27,
+    "priority": 0,
+    "seq": 1
+   },
+   {
+    "id": "q10",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 26,
+    "priority": 1,
+    "seq": 4
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "p03",
+   "q01",
+   "p00",
+   "q04",
+   "q08"
+  ],
+  "unsettled": [
+   "P09",
+   "P06",
+   "P05",
+   "p07",
+   "q10",
+   "p02"
+  ],
+  "balances": {
+   "A": 2,
+   "B": 9,
+   "C": 19,
+   "D": 20
+  }
+ }
+}
