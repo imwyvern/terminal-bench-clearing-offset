@@ -16,6 +16,7 @@ See [instruction.md](instruction.md) for the full task instruction. Additional i
 
 ## Change Log
 
+- `1.3.0` Rulebook revision 4: payment aging and participant strain, aging/strain mutant-killer cases, larger aging cases, and mined dense batches, after deepseek-flash passed 1.2.1 twice.
 - `1.2.1` Closed a loophole in 1.2.0: the grader now rejects native code, `ctypes`, helper programs, and extra processes or threads, after a deepseek-flash trial compiled a C solver and a static GLPK binary into `/app/src`.
 - `1.2.0` Rewrote the rulebook as revision 3 (priority floors, ceilings, priority-2 lots, offset fees, a participant-count tie-break, and a round loop that restarts at priority 0), after codex gpt-6.1-sol passed 1.1.1 with an exact branch-and-bound solver.
 - `1.1.1` Stated that the grader has only the Python standard library, after a deepseek-flash trial built a MILP solver on scipy that was missing from the separate verifier image.

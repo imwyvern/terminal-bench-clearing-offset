@@ -1,0 +1,90 @@
+{
+ "note": "smallest batch found on which one wrong reading of one rule differs",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 12,
+    "reserve": 0,
+    "ceiling": 17
+   },
+   {
+    "id": "B",
+    "collateral": 5,
+    "reserve": 0,
+    "ceiling": 15
+   },
+   {
+    "id": "C",
+    "collateral": 3,
+    "reserve": 0,
+    "ceiling": 1003
+   },
+   {
+    "id": "D",
+    "collateral": 5,
+    "reserve": 2,
+    "ceiling": 15
+   }
+  ],
+  "payments": [
+   {
+    "id": "q00",
+    "debtor": "B",
+    "creditor": "C",
+    "amount": 20,
+    "priority": 2,
+    "seq": 7
+   },
+   {
+    "id": "q01",
+    "debtor": "C",
+    "creditor": "B",
+    "amount": 10,
+    "priority": 1,
+    "seq": 8
+   },
+   {
+    "id": "q02",
+    "debtor": "C",
+    "creditor": "D",
+    "amount": 5,
+    "priority": 1,
+    "seq": 3
+   },
+   {
+    "id": "q03",
+    "debtor": "C",
+    "creditor": "B",
+    "amount": 6,
+    "priority": 1,
+    "seq": 5
+   },
+   {
+    "id": "q04",
+    "debtor": "A",
+    "creditor": "D",
+    "amount": 5,
+    "priority": 0,
+    "seq": 5
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "q04",
+   "q02"
+  ],
+  "unsettled": [
+   "q03",
+   "q01",
+   "q00"
+  ],
+  "balances": {
+   "A": 7,
+   "B": 0,
+   "C": 3,
+   "D": 15
+  }
+ }
+}

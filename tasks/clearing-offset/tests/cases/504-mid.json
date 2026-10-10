@@ -4,9 +4,9 @@
   "participants": [
    {
     "id": "A",
-    "collateral": 20,
-    "reserve": 8,
-    "ceiling": 25
+    "collateral": 35,
+    "reserve": 24,
+    "ceiling": 50
    },
    {
     "id": "B",
@@ -17,128 +17,110 @@
    {
     "id": "C",
     "collateral": 20,
-    "reserve": 19,
-    "ceiling": 1020
+    "reserve": 7,
+    "ceiling": 20
    },
    {
     "id": "D",
-    "collateral": 35,
-    "reserve": 8,
+    "collateral": 20,
+    "reserve": 19,
     "ceiling": 35
    }
   ],
   "payments": [
    {
-    "id": "q00",
-    "debtor": "A",
-    "creditor": "D",
-    "amount": 25,
-    "priority": 1,
-    "seq": 4
-   },
-   {
-    "id": "p01",
-    "debtor": "C",
-    "creditor": "A",
-    "amount": 24,
-    "priority": 1,
-    "seq": 6
-   },
-   {
-    "id": "q02",
+    "id": "p00",
     "debtor": "B",
     "creditor": "D",
-    "amount": 30,
-    "priority": 0,
-    "seq": 6
+    "amount": 26,
+    "priority": 1,
+    "seq": 7
    },
    {
-    "id": "p03",
+    "id": "q01",
     "debtor": "B",
-    "creditor": "A",
-    "amount": 14,
+    "creditor": "D",
+    "amount": 8,
     "priority": 2,
-    "seq": 4
+    "seq": 8
+   },
+   {
+    "id": "p02",
+    "debtor": "C",
+    "creditor": "B",
+    "amount": 13,
+    "priority": 1,
+    "seq": 0
+   },
+   {
+    "id": "P03",
+    "debtor": "C",
+    "creditor": "D",
+    "amount": 28,
+    "priority": 2,
+    "seq": 6
    },
    {
     "id": "q04",
-    "debtor": "A",
-    "creditor": "B",
-    "amount": 6,
-    "priority": 0,
-    "seq": 9
-   },
-   {
-    "id": "q05",
     "debtor": "D",
-    "creditor": "A",
-    "amount": 18,
+    "creditor": "C",
+    "amount": 2,
     "priority": 1,
-    "seq": 8
-   },
-   {
-    "id": "P06",
-    "debtor": "C",
-    "creditor": "B",
-    "amount": 20,
-    "priority": 2,
-    "seq": 8
-   },
-   {
-    "id": "p07",
-    "debtor": "B",
-    "creditor": "D",
-    "amount": 5,
-    "priority": 1,
-    "seq": 6
-   },
-   {
-    "id": "P08",
-    "debtor": "B",
-    "creditor": "D",
-    "amount": 13,
-    "priority": 2,
-    "seq": 9
-   },
-   {
-    "id": "p09",
-    "debtor": "A",
-    "creditor": "B",
-    "amount": 16,
-    "priority": 2,
     "seq": 2
    },
    {
-    "id": "q10",
-    "debtor": "C",
+    "id": "P05",
+    "debtor": "B",
+    "creditor": "D",
+    "amount": 18,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "P06",
+    "debtor": "A",
     "creditor": "B",
-    "amount": 25,
+    "amount": 20,
     "priority": 1,
-    "seq": 4
+    "seq": 7
+   },
+   {
+    "id": "p07",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 1,
+    "priority": 2,
+    "seq": 5
+   },
+   {
+    "id": "q08",
+    "debtor": "A",
+    "creditor": "D",
+    "amount": 16,
+    "priority": 2,
+    "seq": 5
    }
   ]
  },
  "expected": {
   "settled": [
+   "p02",
    "q04",
-   "p09",
-   "p03"
+   "p07"
   ],
   "unsettled": [
-   "q02",
-   "q00",
-   "q10",
-   "p01",
-   "p07",
-   "q05",
    "P06",
-   "P08"
+   "p00",
+   "P05",
+   "q08",
+   "P03",
+   "q01"
   ],
   "balances": {
-   "A": 12,
-   "B": 8,
-   "C": 20,
-   "D": 35
+   "A": 29,
+   "B": 4,
+   "C": 9,
+   "D": 33
   }
  }
 }

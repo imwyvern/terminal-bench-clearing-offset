@@ -10,7 +10,8 @@ def settle(batch: dict) -> dict:
     bal = {p["id"]: p["collateral"] for p in batch["participants"]}
     res = {p["id"]: p["reserve"] for p in batch["participants"]}
     cap = {p["id"]: p["ceiling"] for p in batch["participants"]}
-    todo = {p["id"]: dict(p) for p in batch["payments"]}
+    todo = {p["id"]: dict(p, age=0) for p in batch["payments"]}
+    strained: set[str] = set()
     done: set[str] = set()
 
     def walk(prio: int) -> bool:
@@ -23,7 +24,7 @@ def settle(batch: dict) -> dict:
             hit = False
             for p in [q for q in order if q["priority"] == prio]:
                 d, c, a = p["debtor"], p["creditor"], p["amount"]
-                low = res[d] // 2 if prio == 0 else res[d]
+                low = res[d] // 2 if prio == 0 and d not in strained else res[d]
                 if bal[d] - a >= low and bal[c] + a <= cap[c]:
                     bal[d] -= a
                     bal[c] += a
@@ -37,6 +38,7 @@ def settle(batch: dict) -> dict:
                         bal[d] -= x
                         bal[c] += x
                         p["amount"] -= x
+                        strained.add(d)
                         hit = True
             if not hit:
                 return any_move
@@ -92,6 +94,7 @@ def settle(batch: dict) -> dict:
         for prio in (0, 1, 2):
             if walk(prio):
                 acted = True
+                acted_at = prio
                 break
             win = bundle(prio)
             if win:
@@ -105,9 +108,16 @@ def settle(batch: dict) -> dict:
                 for x, o in out.items():
                     bal[x] -= (o + 19) // 20
                 acted = True
+                acted_at = prio
                 break
         if not acted:
             break
+        for q in todo.values():
+            if q["priority"] > acted_at:
+                q["age"] += 1
+                if q["age"] == 3:
+                    q["priority"] -= 1
+                    q["age"] = 0
 
     by_id = {p["id"]: p for p in batch["payments"]}
 

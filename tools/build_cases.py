@@ -25,6 +25,7 @@ sys.path.insert(0, str(TASK / "solution" / "src"))
 sys.path.insert(0, str(TASK / "tests"))
 
 import mutants  # noqa: E402
+from gen_age import age_batch  # noqa: E402
 import ref_np  # noqa: E402
 import ref_tie  # noqa: E402
 import reference  # noqa: E402
@@ -32,6 +33,7 @@ from lumen import engine  # noqa: E402
 
 CASES = TASK / "tests" / "cases"
 FIXTURES = TASK / "environment" / "fixtures"
+MINED = ROOT / "tools" / "mined"
 
 
 def B(parts, pays):
@@ -65,6 +67,8 @@ def hand_cases():
         "17-union-bundle": B([("A", 3, 3, 100), ("B", 3, 3, 100), ("C", 3, 3, 100)], [("p1", "A", "B", 8, 1, 1), ("p2", "B", "A", 8, 1, 2), ("p3", "B", "C", 6, 1, 3), ("p4", "C", "B", 6, 1, 4)]),
         "18-id-tie": B([("A", 10, 10, 100), ("B", 10, 10, 100)], [("b1", "A", "B", 5, 1, 1), ("a1", "A", "B", 5, 1, 1), ("b2", "B", "A", 5, 1, 2)]),
         "19-bundle-then-pr0": B([("A", 0, 0, 100), ("B", 5, 5, 100), ("C", 5, 5, 100)], [("x1", "B", "C", 10, 1, 1), ("x2", "C", "B", 10, 1, 2), ("z1", "A", "B", 6, 0, 3)]),
+        "21-age-relay": B([("A", 0, 0, 100), ("B", 10, 0, 100), ("C", 0, 0, 100), ("D", 0, 0, 100), ("E", 0, 0, 100)], [("r1", "B", "C", 10, 1, 1), ("r2", "C", "D", 10, 0, 9), ("r3", "D", "E", 10, 1, 2), ("w", "E", "A", 12, 2, 3)]),
+        "22-strain-floor": B([("A", 20, 10, 100), ("B", 0, 0, 100), ("C", 3, 0, 3)], [("p1", "A", "B", 30, 2, 1), ("s", "C", "B", 3, 2, 2), ("q", "A", "C", 3, 0, 3)]),
         "20-pr2-queue-two-pass": B([("A", 30, 5, 100), ("B", 0, 0, 100), ("C", 0, 0, 100)], [("p1", "A", "B", 9, 2, 1), ("p2", "A", "C", 20, 2, 2), ("p3", "B", "A", 5, 2, 3)]),
     }
 
@@ -81,7 +85,13 @@ MUTANTS = {
     "pr2_seq": ("engine", {"pr2_seq"}),
     "seq_prio": ("engine", {"seq_prio"}),
     "tie_count_first": ("tie", None),
+    "no_age": ("engine", {"no_age"}),
+    "age_all": ("engine", {"age_all"}),
+    "age2": ("engine", {"age2"}),
+    "no_strain": ("engine", {"no_strain"}),
+    "age_reset_move": ("engine", {"age_reset_move"}),
 }
+AGE_MUTANTS = {"no_age", "age_all", "age2", "no_strain", "age_reset_move"}
 
 
 def run_mutant(kind, flags, batch):
@@ -135,7 +145,12 @@ def mutant_cases():
         rng = random.Random(7000 + index)
         found = []
         for _ in range(200000):
-            batch = tie_batch(rng) if name == "tie_count_first" else tiny_batch(rng)
+            if name == "tie_count_first":
+                batch = tie_batch(rng)
+            elif name in AGE_MUTANTS:
+                batch = age_batch(rng, 4, 7, 3, 4)
+            else:
+                batch = tiny_batch(rng)
             if run_mutant(kind, flags, batch) != engine.settle(batch):
                 found.append((len(batch["payments"]) * 10 + len(batch["participants"]), len(found), batch))
                 if len(found) >= 12:
@@ -214,13 +229,27 @@ def main() -> None:
     rng = random.Random(20261014)
     mids = 0
     while mids < 12:
-        batch = mid_batch(rng)
+        aging = mids % 2 == 1
+        batch = age_batch(rng, 9, 13, 4, 7) if aging else mid_batch(rng)
         exp = check("mid", batch)
         if len(exp["settled"]) < 3:
+            continue
+        if aging and run_mutant("engine", {"no_age"}, batch) == exp:
             continue
         write(f"5{mids:02d}-mid", batch, exp, "random mid-size batch, seed 20261014")
         stats.append((f"5{mids:02d}-mid", len(batch["payments"]), len(exp["settled"])))
         mids += 1
+
+    rng = random.Random(20261016)
+    aged = 0
+    while aged < 8:
+        batch = age_batch(rng, 14, 20, 5, 8)
+        exp = check("age-large", batch)
+        if len(exp["settled"]) < 6 or run_mutant("engine", {"no_age"}, batch) == exp or run_mutant("engine", {"age_all"}, batch) == exp:
+            continue
+        write(f"55{aged}-age-large", batch, exp, "larger batch where the aging rule decides the outcome, seed 20261016")
+        stats.append((f"55{aged}-age-large", len(batch["payments"]), len(exp["settled"])))
+        aged += 1
 
     rng = random.Random(20261015)
     seen = [0]
@@ -240,6 +269,14 @@ def main() -> None:
         write(f"6{bigs:02d}-gridlock", batch, exp, "gridlock batch, seed 20261015")
         stats.append((f"6{bigs:02d}-gridlock", len(batch["payments"]), len(mine["settled"]), round(dt, 3)))
         bigs += 1
+    for path in sorted(MINED.glob("*.json")):
+        batch = json.loads(path.read_text(encoding="utf-8"))["batch"]
+        t0 = time.time()
+        mine = engine.settle(batch)
+        dt = time.time() - t0
+        assert dt < 2.0, (path.name, dt)
+        write(f"7{path.stem}-hard", batch, mine, "mined hard batch, checked offline against tools/ref_milp.py")
+        stats.append((f"7{path.stem}-hard", len(batch["payments"]), len(mine["settled"]), round(dt, 3)))
     for row in stats:
         print(row)
 

@@ -26,7 +26,7 @@ Starting balance of each participant is `collateral`. A payment moves its amount
 
 ## Unilateral settlement
 
-A payment's `floor` is a number that the debtor's balance must not go below. For priority 0 the floor is `reserve // 2` of the debtor. For priority 1 and priority 2 the floor is the debtor's full `reserve`.
+A payment's `floor` is a number that the debtor's balance must not go below. For priority 0 the floor is `reserve // 2` of the debtor, unless the debtor is strained (see Strain below). For priority 1 and priority 2 the floor is the debtor's full `reserve`. Priorities here are current priorities: aging (below) can lower a payment's priority number while the procedure runs, and the floor, the queues, partial settlement, and bundles all use the current priority.
 
 A payment is affordable when both of these hold, using the balances at the moment it is considered.
 
@@ -36,6 +36,8 @@ A payment is affordable when both of these hold, using the balances at the momen
 A unilateral settlement of an affordable payment moves its whole amount and the payment is settled.
 
 Partial settlement applies to priority 2 only. When a priority 2 payment is not affordable, let `x = min(amount, balance[debtor] - reserve[debtor], ceiling[creditor] - balance[creditor])`. If `x >= 5`, move `x - x % 5` (the largest multiple of 5 not above `x`) now. The payment stays unsettled with the same id and seq, and its `amount` is reduced by what moved. If `x < 5` nothing moves. A priority 0 or priority 1 payment is never split.
+
+Strain. A participant becomes strained the first time it is the debtor of a partial settlement that moves money, and stays strained until the procedure ends. For a strained debtor the priority 0 floor is its full `reserve`, the same as for the other priorities.
 
 The queue of a priority is its unsettled payments. Within one pass the queue is ordered as follows, and the order is computed once at the start of the pass and does not change during the pass.
 
@@ -67,8 +69,9 @@ Repeat the following round until a round settles nothing. In a round, take prior
 1. Run the unilateral phase for the priority. If it acted, the round ends here.
 2. Otherwise look for the winning bundle for that priority among its unsettled payments. If one exists, settle it, subtract the fees, and the round ends here.
 3. Otherwise go on to the next priority.
+4. Aging, applied once a round has acted at priority `q` (the round ends first), every payment that is still unsettled and whose current priority number is greater than `q` has its age increased by 1. A payment whose age reaches 3 has its priority number reduced by 1 and its age set back to 0. A payment moves at most one priority level per round, and a priority 0 payment never moves further. Every payment starts with age 0. Moving money on a payment (a partial settlement) does not change its age, and an age is not reset by anything other than reaching 3.
 
-The next round starts again at priority 0, whatever priority acted. A round that reaches the end of priority 2 without acting ends the procedure.
+The next round starts again at priority 0, whatever priority acted. A round that reaches the end of priority 2 without acting ends the procedure, and no aging happens after it.
 
 ## Limits
 
@@ -89,5 +92,9 @@ Ceiling blocks a payment. `A 10/0/100`, `B 8/0/10`. `p1 A->B 5` priority 0: A ca
 Partial settlement and queue order. `A 12/2/100`, `B 0/0/100`. Payments `p1 A->B 14` priority 2 seq 1 and `p2 A->B 6` priority 2 seq 0. The queue is `p1` then `p2` (larger amount first). `p1` is not affordable (`12 - 14 < 2`), `x = min(14, 12 - 2, 100) = 10`, so 10 moves: A is at 2 and `p1` stays unsettled with amount 4. `p2` is not affordable (`2 - 6 < 2`), `x = 0`, nothing moves. The next pass moves nothing. Balances: A 2, B 10. Both payments are unsettled. If `p2` had gone first it would have settled in full.
 
 The tie chain. `A 2/2/100`, `B 8/8/100`, `C 2/2/100`. Payments `p1 A->B 10`, `p2 A->C 6`, `p3 C->B 4`, `p4 B->A 10`, all priority 1 with seq 1, 2, 3, 4. Nothing is affordable. Two bundles have the best sum 20: `{p1, p4}` touches two participants (A, B) and `{p2, p3, p4}` touches three (A, B, C). Fewer participants wins, even though the second bundle has more payments. `{p1, p4}` settles with fees of 1 for A and 1 for B (A ends at `2 + 10 - 10 - 1 = 1`, B at `8 + 10 - 10 - 1 = 7`). Balances: A 1, B 7, C 2. `p2` and `p3` stay unsettled and nothing more can settle.
+
+Aging. `A 0/0/100`, `B 10/0/100`, `C 0/0/100`, `D 0/0/100`, `E 0/0/100`. Payments `r1 B->C 10` priority 1 seq 1, `r2 C->D 10` priority 0 seq 9, `r3 D->E 10` priority 1 seq 2, and `w E->A 10` priority 2 seq 3. Round 1: priority 0 cannot act and has no bundle, priority 1 settles `r1`. `w` has priority number 2, which is greater than 1, so its age becomes 1. Round 2: priority 0 settles `r2`, `w` ages to 2. Round 3: priority 0 has nothing, priority 1 settles `r3`, and `w` ages to 3, so its priority number becomes 1 and its age 0. Round 4 finds `w` payable at priority 1. Settled: all four payments. Balances: A 10, B 0, C 0, D 0, E 0.
+
+Strain. `A 20/10/100`, `B 0/0/100`, `C 3/0/3`. `p1 A->B 30` priority 2 seq 1 cannot be paid in full, so `x = min(30, 20 - 10, 100) = 10` moves and A becomes strained with balance 10. From then on a priority 0 payment of A needs `balance - amount >= 10`, not `>= 5`.
 
 Priorities are not finished once and for all. `A 0/0/100`, `B 10/0/100`, `C 0/0/100`. `p0 C->A 10` is priority 0 seq 5 and `p1 B->C 10` is priority 1 seq 1. Round 1: priority 0 cannot act (C has nothing) and has no bundle, so priority 1 acts and `p1` settles (C has 10). Round 2 starts at priority 0 and `p0` is now affordable. Settled: `p0`, `p1`. Balances: A 10, B 0, C 0.
