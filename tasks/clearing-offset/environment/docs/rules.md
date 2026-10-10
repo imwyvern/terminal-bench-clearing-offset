@@ -45,7 +45,7 @@ Process priority 0 to completion, then priority 1, then priority 2. Payments of 
 
 ## Limits
 
-A batch has at most 24 participants and at most 64 payments. `python -m lumen.settle` must finish every valid batch within 5 seconds on one CPU core. The winning bundle is not necessarily a single cycle and a batch can hold far more candidate bundles than can be listed one by one.
+A batch has at most 24 participants and at most 64 payments. `python -m lumen.settle` must finish every valid batch within 5 seconds on one CPU core, using only the Python 3.12 standard library plus the code in `/app/src`. Third-party packages installed in the working container are not available to the grader. The winning bundle is not necessarily a single cycle and a batch can hold far more candidate bundles than can be listed one by one.
 
 ## Worked batches
 

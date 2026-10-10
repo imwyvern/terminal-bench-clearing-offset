@@ -16,6 +16,7 @@ See [instruction.md](instruction.md) for the full task instruction. Additional i
 
 ## Change Log
 
+- `1.1.1` Stated that the grader has only the Python standard library, after a deepseek-flash trial built a MILP solver on scipy that was missing from the separate verifier image.
 - `1.1.0` Replaced the cycle-only offset step with a winning-bundle search and added size and time limits, after codex gpt-6.1-sol and terminus-2 deepseek-flash each passed 1.0.0 on the first trial.
 - `1.0.0` Initial clearing-offset task.
 
