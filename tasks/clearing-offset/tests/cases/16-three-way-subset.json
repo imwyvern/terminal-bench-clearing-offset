@@ -1,0 +1,94 @@
+{
+ "note": "hand batch",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 2,
+    "reserve": 2
+   },
+   {
+    "id": "B",
+    "collateral": 0,
+    "reserve": 0
+   },
+   {
+    "id": "C",
+    "collateral": 0,
+    "reserve": 0
+   },
+   {
+    "id": "D",
+    "collateral": 0,
+    "reserve": 0
+   }
+  ],
+  "payments": [
+   {
+    "id": "a1",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 5,
+    "priority": 1,
+    "seq": 1
+   },
+   {
+    "id": "a2",
+    "debtor": "B",
+    "creditor": "C",
+    "amount": 5,
+    "priority": 1,
+    "seq": 2
+   },
+   {
+    "id": "a3",
+    "debtor": "C",
+    "creditor": "A",
+    "amount": 3,
+    "priority": 1,
+    "seq": 3
+   },
+   {
+    "id": "a4",
+    "debtor": "C",
+    "creditor": "D",
+    "amount": 2,
+    "priority": 1,
+    "seq": 4
+   },
+   {
+    "id": "a5",
+    "debtor": "D",
+    "creditor": "A",
+    "amount": 2,
+    "priority": 1,
+    "seq": 5
+   },
+   {
+    "id": "a6",
+    "debtor": "A",
+    "creditor": "D",
+    "amount": 1,
+    "priority": 1,
+    "seq": 6
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "a1",
+   "a2",
+   "a3",
+   "a4",
+   "a5",
+   "a6"
+  ],
+  "unsettled": [],
+  "balances": {
+   "A": 1,
+   "B": 0,
+   "C": 0,
+   "D": 1
+  }
+ }
+}

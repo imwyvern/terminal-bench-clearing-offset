@@ -1,0 +1,146 @@
+{
+ "note": "random mid-size batch, seed 20261012",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 3,
+    "reserve": 0
+   },
+   {
+    "id": "B",
+    "collateral": 1,
+    "reserve": 0
+   },
+   {
+    "id": "C",
+    "collateral": 1,
+    "reserve": 0
+   },
+   {
+    "id": "D",
+    "collateral": 4,
+    "reserve": 3
+   },
+   {
+    "id": "E",
+    "collateral": 3,
+    "reserve": 3
+   }
+  ],
+  "payments": [
+   {
+    "id": "q00",
+    "debtor": "A",
+    "creditor": "E",
+    "amount": 3,
+    "priority": 0,
+    "seq": 9
+   },
+   {
+    "id": "P01",
+    "debtor": "B",
+    "creditor": "E",
+    "amount": 1,
+    "priority": 0,
+    "seq": 9
+   },
+   {
+    "id": "P02",
+    "debtor": "E",
+    "creditor": "B",
+    "amount": 7,
+    "priority": 0,
+    "seq": 8
+   },
+   {
+    "id": "P03",
+    "debtor": "E",
+    "creditor": "A",
+    "amount": 3,
+    "priority": 0,
+    "seq": 6
+   },
+   {
+    "id": "q04",
+    "debtor": "A",
+    "creditor": "D",
+    "amount": 1,
+    "priority": 0,
+    "seq": 8
+   },
+   {
+    "id": "p05",
+    "debtor": "C",
+    "creditor": "E",
+    "amount": 7,
+    "priority": 0,
+    "seq": 7
+   },
+   {
+    "id": "P06",
+    "debtor": "D",
+    "creditor": "A",
+    "amount": 7,
+    "priority": 0,
+    "seq": 9
+   },
+   {
+    "id": "p07",
+    "debtor": "E",
+    "creditor": "C",
+    "amount": 1,
+    "priority": 0,
+    "seq": 8
+   },
+   {
+    "id": "q08",
+    "debtor": "B",
+    "creditor": "C",
+    "amount": 7,
+    "priority": 0,
+    "seq": 2
+   },
+   {
+    "id": "p09",
+    "debtor": "E",
+    "creditor": "C",
+    "amount": 3,
+    "priority": 0,
+    "seq": 2
+   },
+   {
+    "id": "p10",
+    "debtor": "A",
+    "creditor": "E",
+    "amount": 7,
+    "priority": 1,
+    "seq": 6
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "p09",
+   "q08",
+   "P03",
+   "p05",
+   "P02",
+   "p07",
+   "q04",
+   "P01",
+   "q00"
+  ],
+  "unsettled": [
+   "P06",
+   "p10"
+  ],
+  "balances": {
+   "A": 2,
+   "B": 0,
+   "C": 5,
+   "D": 5,
+   "E": 0
+  }
+ }
+}

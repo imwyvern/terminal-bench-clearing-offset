@@ -1,51 +1,52 @@
 {
-  "batch": {
-    "participants": [
-      {
-        "id": "A",
-        "collateral": 0,
-        "reserve": 0
-      },
-      {
-        "id": "B",
-        "collateral": 5,
-        "reserve": 0
-      },
-      {
-        "id": "C",
-        "collateral": 0,
-        "reserve": 0
-      }
-    ],
-    "payments": [
-      {
-        "id": "p1",
-        "debtor": "A",
-        "creditor": "C",
-        "amount": 5,
-        "priority": 0,
-        "seq": 1
-      },
-      {
-        "id": "p2",
-        "debtor": "B",
-        "creditor": "A",
-        "amount": 5,
-        "priority": 0,
-        "seq": 2
-      }
-    ]
-  },
-  "expected": {
-    "settled": [
-      "p1",
-      "p2"
-    ],
-    "unsettled": [],
-    "balances": {
-      "A": 0,
-      "B": 0,
-      "C": 5
-    }
+ "note": "hand batch",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 0,
+    "reserve": 0
+   },
+   {
+    "id": "B",
+    "collateral": 5,
+    "reserve": 0
+   },
+   {
+    "id": "C",
+    "collateral": 0,
+    "reserve": 0
+   }
+  ],
+  "payments": [
+   {
+    "id": "p1",
+    "debtor": "A",
+    "creditor": "C",
+    "amount": 5,
+    "priority": 0,
+    "seq": 1
+   },
+   {
+    "id": "p2",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 5,
+    "priority": 0,
+    "seq": 2
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "p1",
+   "p2"
+  ],
+  "unsettled": [],
+  "balances": {
+   "A": 0,
+   "B": 0,
+   "C": 5
   }
+ }
 }

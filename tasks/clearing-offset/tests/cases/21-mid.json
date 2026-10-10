@@ -1,0 +1,170 @@
+{
+ "note": "random mid-size batch, seed 20261012",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 4,
+    "reserve": 2
+   },
+   {
+    "id": "B",
+    "collateral": 3,
+    "reserve": 0
+   },
+   {
+    "id": "C",
+    "collateral": 2,
+    "reserve": 0
+   },
+   {
+    "id": "D",
+    "collateral": 0,
+    "reserve": 0
+   },
+   {
+    "id": "E",
+    "collateral": 1,
+    "reserve": 0
+   },
+   {
+    "id": "F",
+    "collateral": 3,
+    "reserve": 0
+   }
+  ],
+  "payments": [
+   {
+    "id": "q00",
+    "debtor": "A",
+    "creditor": "E",
+    "amount": 1,
+    "priority": 1,
+    "seq": 3
+   },
+   {
+    "id": "p01",
+    "debtor": "A",
+    "creditor": "F",
+    "amount": 5,
+    "priority": 0,
+    "seq": 2
+   },
+   {
+    "id": "p02",
+    "debtor": "A",
+    "creditor": "E",
+    "amount": 7,
+    "priority": 2,
+    "seq": 7
+   },
+   {
+    "id": "q03",
+    "debtor": "C",
+    "creditor": "E",
+    "amount": 7,
+    "priority": 0,
+    "seq": 8
+   },
+   {
+    "id": "P04",
+    "debtor": "E",
+    "creditor": "C",
+    "amount": 2,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "P05",
+    "debtor": "C",
+    "creditor": "D",
+    "amount": 1,
+    "priority": 0,
+    "seq": 8
+   },
+   {
+    "id": "q06",
+    "debtor": "D",
+    "creditor": "A",
+    "amount": 5,
+    "priority": 0,
+    "seq": 5
+   },
+   {
+    "id": "P07",
+    "debtor": "E",
+    "creditor": "B",
+    "amount": 5,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "P08",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 3,
+    "priority": 0,
+    "seq": 4
+   },
+   {
+    "id": "p09",
+    "debtor": "D",
+    "creditor": "B",
+    "amount": 1,
+    "priority": 2,
+    "seq": 9
+   },
+   {
+    "id": "P10",
+    "debtor": "E",
+    "creditor": "C",
+    "amount": 3,
+    "priority": 0,
+    "seq": 1
+   },
+   {
+    "id": "q11",
+    "debtor": "F",
+    "creditor": "C",
+    "amount": 1,
+    "priority": 0,
+    "seq": 1
+   },
+   {
+    "id": "q12",
+    "debtor": "A",
+    "creditor": "F",
+    "amount": 6,
+    "priority": 2,
+    "seq": 2
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "q11",
+   "p01",
+   "P08",
+   "P05",
+   "p09"
+  ],
+  "unsettled": [
+   "P10",
+   "q06",
+   "q03",
+   "q00",
+   "P04",
+   "P07",
+   "q12",
+   "p02"
+  ],
+  "balances": {
+   "A": 2,
+   "B": 1,
+   "C": 2,
+   "D": 0,
+   "E": 1,
+   "F": 7
+  }
+ }
+}
