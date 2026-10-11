@@ -6,7 +6,7 @@ artifacts = ["/app/src/"]
 
 [task]
 name = "terminal-bench/clearing-offset"
-version = "1.3.1"
+version = "1.4.0"
 description = "Repair a multilateral payment-offset engine so every valid batch follows the Lumen rulebook."
 authors = [{ name = "imwyvern", email = "imwyvern@example.com" }]
 

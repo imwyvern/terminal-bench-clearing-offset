@@ -10,7 +10,7 @@ Each participant has `id` (string), `collateral` (integer greater than or equal 
 
 Each payment has `id` (string), `debtor` (participant id), `creditor` (a different participant id), `amount` (integer greater than 0), `priority` (integer 0, 1, or 2), and `seq` (integer).
 
-Participant ids are unique. Payment ids are unique. Ids are case-sensitive and are not trimmed. Lower priority numbers are more urgent: 0, then 1, then 2.
+Every integer in a batch (`collateral`, `reserve`, `ceiling`, `amount`) is at most 1000000000. Participant ids are unique. Payment ids are unique. Ids are case-sensitive and are not trimmed. Lower priority numbers are more urgent: 0, then 1, then 2.
 
 The engine is only required to follow this procedure on batches that already meet these constraints.
 
@@ -75,7 +75,7 @@ The next round starts again at priority 0, whatever priority acted. A round that
 
 ## Limits
 
-A batch has at most 24 participants and at most 64 payments. `python -m lumen.settle` must finish every valid batch within 5 seconds on one CPU core, using only the Python 3.12 standard library plus pure Python source in `/app/src`. Third-party packages installed in the working container are not available to the grader. The grader rejects native code: no shared libraries, executables, or other compiled files under `/app/src`, no `ctypes`, `cffi`, `subprocess`, `multiprocessing`, or `importlib` imports, no calls to `exec`, `eval`, `__import__`, `os.system`, `os.popen`, `os.exec*`, `os.spawn*`, `os.fork*`, or `os.posix_spawn*`, and the graded process may not start other processes or threads. The winning bundle is not necessarily a single cycle and a batch can hold far more candidate bundles than can be listed one by one.
+A batch has at most 24 participants and at most 64 payments. `python -m lumen.settle` must finish every valid batch within 5 seconds on one CPU core, using only the Python 3.12 standard library plus pure Python source in `/app/src`. Third-party packages installed in the working container are not available to the grader. The grader rejects native code: no shared libraries, executables, or other compiled files under `/app/src`, no `ctypes`, `cffi`, `subprocess`, `multiprocessing`, or `importlib` imports, no calls to `exec`, `eval`, `__import__`, `os.system`, `os.popen`, `os.exec*`, `os.spawn*`, `os.fork*`, or `os.posix_spawn*`, and the graded process may not start other processes or threads. Because integers can reach 1000000000 while a partial settlement moves at most the balance that a debtor can spare, a priority 2 phase can consist of tens of millions of passes (see the last worked batch). The result of the procedure is defined by those passes, so a report is correct exactly when it equals what that many passes would produce. A batch is valid and graded even when running the passes one by one would not finish within 5 seconds, so a solution is expected to produce that same result without executing every pass. The winning bundle is not necessarily a single cycle and a batch can hold far more candidate bundles than can be listed one by one.
 
 ## Worked batches
 
@@ -98,3 +98,5 @@ Aging. `A 0/0/100`, `B 10/0/100`, `C 0/0/100`, `D 0/0/100`, `E 0/0/100`. Payment
 Strain. `A 20/10/100`, `B 0/0/100`, `C 3/0/3`. `p1 A->B 30` priority 2 seq 1 cannot be paid in full, so `x = min(30, 20 - 10, 100) = 10` moves and A becomes strained with balance 10. From then on a priority 0 payment of A needs `balance - amount >= 10`, not `>= 5`.
 
 Priorities are not finished once and for all. `A 0/0/100`, `B 10/0/100`, `C 0/0/100`. `p0 C->A 10` is priority 0 seq 5 and `p1 B->C 10` is priority 1 seq 1. Round 1: priority 0 cannot act (C has nothing) and has no bundle, so priority 1 acts and `p1` settles (C has 10). Round 2 starts at priority 0 and `p0` is now affordable. Settled: `p0`, `p1`. Balances: A 10, B 0, C 0.
+
+Many passes. `A 10/0/100000`, `B 10/0/100000`. `p1 A->B 30` priority 2 seq 1 and `p2 B->A 30` priority 2 seq 2. Pass 1: `p1` (tie on amount, seq 1 first) moves 10, so A is at 0 and B at 20 and `p1` has 20 left; `p2` moves 20, so B is at 0, A is at 20, and `p2` has 10 left. Pass 2 orders the queue by the amounts at its start (`p1` 20, `p2` 10): `p1` is affordable in full and settles, then `p2` settles. Both payments settle in 2 passes and the balances return to A 10, B 10. With `30` replaced by `n` the same exchange takes about `n / 20` passes (51 for `n = 1000`, 5001 for `n = 100000`), and for `n = 1000000000` about 50 million passes, with the same ending balances.

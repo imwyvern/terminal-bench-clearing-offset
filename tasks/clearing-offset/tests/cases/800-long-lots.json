@@ -1,0 +1,49 @@
+{
+ "note": "huge partial-lot ping-pong; checked offline by tools/verify_pp.py against pass-by-pass simulation",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 40,
+    "reserve": 35,
+    "ceiling": 140
+   },
+   {
+    "id": "B",
+    "collateral": 17,
+    "reserve": 12,
+    "ceiling": 29
+   }
+  ],
+  "payments": [
+   {
+    "id": "p00",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 307846699,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "p01",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 496420337,
+    "priority": 2,
+    "seq": 5
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "p00"
+  ],
+  "unsettled": [
+   "p01"
+  ],
+  "balances": {
+   "A": 41,
+   "B": 16
+  }
+ }
+}

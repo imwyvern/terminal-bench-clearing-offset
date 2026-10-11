@@ -16,6 +16,7 @@ See [instruction.md](instruction.md) for the full task instruction. Additional i
 
 ## Change Log
 
+- `1.4.0` Added a stated bound (every batch integer is at most 10^9) and 12 verifier cases where priority 2 partial lots ping-pong for tens of millions of passes, so a pass-by-pass simulation of the rulebook is correct but takes over a minute; the reference engine now detects repeating passes and jumps. Added after codex and deepseek-flash both passed 1.3.x within about 90 minutes.
 - `1.3.1` Fixed a false positive in the pure-Python check: it flagged any attribute named `fork`, which failed a codex solution whose pure-Python LP class has a `fork` method. The check now flags only `os`/`posix` calls (including aliases).
 - `1.3.0` Rulebook revision 4: payment aging and participant strain, aging/strain mutant-killer cases, larger aging cases, and mined dense batches, after deepseek-flash passed 1.2.1 twice.
 - `1.2.1` Closed a loophole in 1.2.0: the grader now rejects native code, `ctypes`, helper programs, and extra processes or threads, after a deepseek-flash trial compiled a C solver and a static GLPK binary into `/app/src`.

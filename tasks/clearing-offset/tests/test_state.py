@@ -127,7 +127,7 @@ def test_reference_matches_small_cases() -> None:
     checked = 0
     for path in CASES:
         payload = json.loads(path.read_text(encoding="utf-8"))
-        if len(payload["batch"]["payments"]) > 13:
+        if len(payload["batch"]["payments"]) > 13 or max(x["amount"] for x in payload["batch"]["payments"]) > 100_000:
             continue
         assert _canon(reference_settle(payload["batch"]), payload["batch"]) == _canon(
             payload["expected"], payload["batch"]

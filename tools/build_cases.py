@@ -26,6 +26,7 @@ sys.path.insert(0, str(TASK / "tests"))
 
 import mutants  # noqa: E402
 from gen_age import age_batch  # noqa: E402
+from gen_pp import pp_batch  # noqa: E402
 import ref_np  # noqa: E402
 import ref_tie  # noqa: E402
 import reference  # noqa: E402
@@ -207,6 +208,29 @@ def check(name, batch):
     return exp
 
 
+def naive_is_slow(batch, seconds=6):
+    """True when the pass-by-pass simulation (tools/mutants.py with no wrong reading) needs more than `seconds`."""
+    import signal
+
+    class Slow(Exception):
+        pass
+
+    def stop(*_):
+        raise Slow
+
+    old = signal.signal(signal.SIGALRM, stop)
+    signal.alarm(seconds)
+    try:
+        mutants.M.clear()
+        mutants.settle(batch)
+        return False
+    except Slow:
+        return True
+    finally:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, old)
+
+
 def main() -> None:
     for old in CASES.glob("*.json"):
         old.unlink()
@@ -269,6 +293,26 @@ def main() -> None:
         write(f"6{bigs:02d}-gridlock", batch, exp, "gridlock batch, seed 20261015")
         stats.append((f"6{bigs:02d}-gridlock", len(batch["payments"]), len(mine["settled"]), round(dt, 3)))
         bigs += 1
+    rng = random.Random(20261017)
+    heavy = 0
+    tries = 0
+    while heavy < 12:
+        tries += 1
+        batch = pp_batch(rng, amt_hi=10**9)
+        for pay in batch["payments"]:
+            if pay["amount"] > 100:
+                pay["amount"] = rng.randint(3 * 10**8, 10**9)
+        if sum(1 for pay in batch["payments"] if pay["priority"] == 2 and pay["amount"] > 10**8) < 2:
+            continue
+        if not naive_is_slow(batch):
+            continue
+        t0 = time.time()
+        mine = engine.settle(batch)
+        dt = time.time() - t0
+        assert dt < 1.0, dt
+        write(f"8{heavy:02d}-long-lots", batch, mine, "huge partial-lot ping-pong; checked offline by tools/verify_pp.py against pass-by-pass simulation")
+        stats.append((f"8{heavy:02d}-long-lots", len(batch["payments"]), len(mine["settled"]), round(dt, 3)))
+        heavy += 1
     for path in sorted(MINED.glob("*.json")):
         batch = json.loads(path.read_text(encoding="utf-8"))["batch"]
         t0 = time.time()

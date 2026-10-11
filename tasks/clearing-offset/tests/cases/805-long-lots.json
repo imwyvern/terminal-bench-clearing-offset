@@ -1,0 +1,85 @@
+{
+ "note": "huge partial-lot ping-pong; checked offline by tools/verify_pp.py against pass-by-pass simulation",
+ "batch": {
+  "participants": [
+   {
+    "id": "A",
+    "collateral": 8,
+    "reserve": 0,
+    "ceiling": 108
+   },
+   {
+    "id": "B",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 1000000
+   }
+  ],
+  "payments": [
+   {
+    "id": "p00",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 480183635,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "p01",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 7,
+    "priority": 0,
+    "seq": 1
+   },
+   {
+    "id": "p02",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 955465497,
+    "priority": 1,
+    "seq": 0
+   },
+   {
+    "id": "p03",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 30,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "p04",
+    "debtor": "B",
+    "creditor": "A",
+    "amount": 660270219,
+    "priority": 2,
+    "seq": 2
+   },
+   {
+    "id": "p05",
+    "debtor": "A",
+    "creditor": "B",
+    "amount": 585437408,
+    "priority": 2,
+    "seq": 2
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "p00",
+   "p03",
+   "p05"
+  ],
+  "unsettled": [
+   "p01",
+   "p02",
+   "p04"
+  ],
+  "balances": {
+   "A": 5,
+   "B": 3
+  }
+ }
+}
