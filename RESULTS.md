@@ -76,8 +76,8 @@ Take-home pair after the allowed substitution: Codex plus DeepSeek V4.1 Flash in
 | Trial | Model | Job id / trial | Reward | Notes |
 | --- | --- | --- | --- | --- |
 | `/run` 1 | terminus-2 `deepseek/deepseek-flash` `reasoning_effort=max` | `c82cd146-67cd-44c7-a1a5-3574b97e1ec5` / `W2hnKub` | **0** | Finished, no exception, 153 steps, about 1h19m. 105 of 108 tests passed. The 3 failures are timeouts at 5 s on `801-long-lots`, `803-long-lots` and `809-long-lots`. Valid failure: the verifier ran and returned 0. |
-| `/run` 2 | terminus-2 `deepseek/deepseek-flash` | same job | PENDING | |
-| `/run` 3 | terminus-2 `deepseek/deepseek-flash` | same job | PENDING | |
+| `/run` 2 | terminus-2 `deepseek/deepseek-flash` | same job / `5k5MmBz` | **0** | Finished, no exception, 151 steps, about 1h56m. 105 of 108 passed; the 3 failures are the same timeouts at 5 s on `801`, `803`, `809-long-lots`. Valid failure. |
+| `/run` 3 | terminus-2 `deepseek/deepseek-flash` | same job / `xxWynm2` | **0** | Finished, no exception, 280 steps, about 2h34m. 105 of 108 passed; the same 3 timeouts. Valid failure. |
 | `/run` 1 | codex `openai/gpt-6.1-sol` `reasoning_effort=xhigh` | `20623c7a-5f62-49e4-b03d-81ed9fcad06f` | PENDING | running since 2026-10-10 about 20:06 PT. Codex trials of the previous version took about 8 hours each. |
 | `/run` 2 | codex `openai/gpt-6.1-sol` | same job | PENDING | |
 | `/run` 3 | codex `openai/gpt-6.1-sol` | same job | PENDING | |
@@ -122,7 +122,8 @@ The 1.4.0 hardening came from checking the three Codex 1.3.1 engines on 12 rando
 
 ### DeepSeek (terminus-2, `deepseek-flash`)
 
-- Trial `W2hnKub` (1.4.0, valid failure, reward 0): the run finished normally (153 steps, no exception). The submitted engine was correct on 105 of 108 tests, including all hand batches, mutant-killer batches, aging/strain batches and mined dense batches. It timed out at 5 s on `801`, `803` and `809-long-lots`, which are batches whose priority-2 phase makes tens of millions of passes. So the failure is a performance failure on a stated requirement, not an infrastructure error and not a rule misreading. Trajectory reading is PENDING.
+- 1.4.0, all three trials (`W2hnKub`, `5k5MmBz`, `xxWynm2`) are valid failures with reward 0. Each run finished normally, with no exception. Each submitted a pure-Python engine of 671, 534 and 473 lines that was correct on 105 of 108 tests, including all hand batches, mutant-killer batches, aging and strain batches, and mined dense batches. The same three tests timed out at 5 s in all three trials: `801-long-lots`, `803-long-lots` and `809-long-lots`. These are priority-2 phases that make hundreds of millions of passes. I re-ran the three submitted engines on those batches offline and they still had not finished after 120 s, so this is a speed failure and not a wrong answer. The failures are not infrastructure errors.
+- What the trajectories show: all three agents read the rulebook's statement that a phase can take tens of millions of passes, tried the worked many-pass example, and wrote an accelerated priority-2 phase (`W2hnKub` step 9: an "event-batched priority-2 unilateral phase"; `5k5MmBz` steps 24 to 30: a "fast-forward" batch size patched after a randomized mismatch; `xxWynm2` steps 9 to 12: simulated random phases to look for a regime to exploit). Their shortcuts handle the simple two-payment ping-pong and 9 of the 12 stored many-pass batches, but not those 3 batches (3 to 4 participants, 4 to 6 priority-2 payments, largest amounts 8.4x10^8 to 9.7x10^8; other stored batches of similar size, such as `802`, were solved in time). I have not characterized more precisely which property of those batches defeats their shortcuts. All three then ended with a final claim that their engine "handles many-pass cases efficiently", on the basis of their own tests, which did not include a batch of this shape. In short: they understood the requirement and implemented a partial acceleration; they did not find a cycle-detecting acceleration that is correct for queue-order changes.
 - On 1.3.1, which did not mention the long passes, all three DeepSeek trials passed.
 
 ### Codex (`gpt-6.1-sol`, xhigh)
@@ -132,7 +133,7 @@ The 1.4.0 hardening came from checking the three Codex 1.3.1 engines on 12 rando
 
 ### Which requirements are met
 
-- Standard trials all reward 0 on the final version: NOT YET MET. DeepSeek has one valid failure out of one finished trial; the others are PENDING.
+- Standard trials all reward 0 on the final version: NOT YET MET. DeepSeek: 3 of 3 valid failures. Codex: PENDING.
 - `/cheat` reward 0: DeepSeek yes (every attempt); Codex could not be run (safety refusal at the endpoint).
 - Oracle 1, nop 0, 27 of 27 static checks: met.
 - `harbor check` rubric: not run (needs a model key); marked for Dan.
