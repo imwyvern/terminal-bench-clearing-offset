@@ -1,0 +1,198 @@
+{
+ "note": "mined multi-hop partial-lot batch (lots_b7_2160); checked offline by tools/verify_pp.py against pass-by-pass simulation",
+ "batch": {
+  "participants": [
+   {
+    "id": "P0",
+    "collateral": 305301786,
+    "reserve": 0,
+    "ceiling": 305301816
+   },
+   {
+    "id": "P1",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 0
+   },
+   {
+    "id": "P2",
+    "collateral": 195076048,
+    "reserve": 0,
+    "ceiling": 195076078
+   },
+   {
+    "id": "P3",
+    "collateral": 181292416,
+    "reserve": 90646208,
+    "ceiling": 181292416
+   },
+   {
+    "id": "P4",
+    "collateral": 40,
+    "reserve": 0,
+    "ceiling": 47
+   },
+   {
+    "id": "P5",
+    "collateral": 19981202,
+    "reserve": 9990601,
+    "ceiling": 19981202
+   },
+   {
+    "id": "P6",
+    "collateral": 5,
+    "reserve": 0,
+    "ceiling": 5
+   },
+   {
+    "id": "P7",
+    "collateral": 40,
+    "reserve": 33,
+    "ceiling": 47
+   },
+   {
+    "id": "P8",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 7
+   },
+   {
+    "id": "P9",
+    "collateral": 849014560,
+    "reserve": 0,
+    "ceiling": 849014590
+   },
+   {
+    "id": "P10",
+    "collateral": 276960688,
+    "reserve": 0,
+    "ceiling": 276960718
+   },
+   {
+    "id": "P11",
+    "collateral": 10,
+    "reserve": 5,
+    "ceiling": 10
+   },
+   {
+    "id": "P12",
+    "collateral": 460645648,
+    "reserve": 230322824,
+    "ceiling": 460645648
+   }
+  ],
+  "payments": [
+   {
+    "id": "q0",
+    "debtor": "P2",
+    "creditor": "P0",
+    "amount": 26,
+    "priority": 1,
+    "seq": 1
+   },
+   {
+    "id": "q1",
+    "debtor": "P10",
+    "creditor": "P5",
+    "amount": 38,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "q2",
+    "debtor": "P5",
+    "creditor": "P4",
+    "amount": 9,
+    "priority": 1,
+    "seq": 4
+   },
+   {
+    "id": "q3",
+    "debtor": "P10",
+    "creditor": "P3",
+    "amount": 988856586,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "q4",
+    "debtor": "P11",
+    "creditor": "P4",
+    "amount": 20,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "q5",
+    "debtor": "P5",
+    "creditor": "P8",
+    "amount": 550654866,
+    "priority": 2,
+    "seq": 4
+   },
+   {
+    "id": "q6",
+    "debtor": "P8",
+    "creditor": "P11",
+    "amount": 292104535,
+    "priority": 2,
+    "seq": 4
+   },
+   {
+    "id": "q7",
+    "debtor": "P5",
+    "creditor": "P6",
+    "amount": 495023370,
+    "priority": 0,
+    "seq": 2
+   },
+   {
+    "id": "q8",
+    "debtor": "P10",
+    "creditor": "P11",
+    "amount": 23,
+    "priority": 2,
+    "seq": 4
+   },
+   {
+    "id": "q9",
+    "debtor": "P3",
+    "creditor": "P10",
+    "amount": 908248182,
+    "priority": 2,
+    "seq": 3
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "q0",
+   "q9"
+  ],
+  "unsettled": [
+   "q7",
+   "q2",
+   "q1",
+   "q3",
+   "q4",
+   "q5",
+   "q6",
+   "q8"
+  ],
+  "balances": {
+   "P0": 305301812,
+   "P1": 0,
+   "P10": 276960680,
+   "P11": 10,
+   "P12": 460645648,
+   "P2": 195076022,
+   "P3": 181292414,
+   "P4": 45,
+   "P5": 19981202,
+   "P6": 5,
+   "P7": 40,
+   "P8": 5,
+   "P9": 849014560
+  }
+ }
+}

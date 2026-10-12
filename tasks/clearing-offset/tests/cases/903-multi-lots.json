@@ -1,0 +1,112 @@
+{
+ "note": "mined multi-hop partial-lot batch (lots_b12_3011); checked offline by tools/verify_pp.py against pass-by-pass simulation",
+ "batch": {
+  "participants": [
+   {
+    "id": "P0",
+    "collateral": 917471804,
+    "reserve": 458735902,
+    "ceiling": 968014773
+   },
+   {
+    "id": "P1",
+    "collateral": 28546106,
+    "reserve": 28546106,
+    "ceiling": 28546113
+   }
+  ],
+  "payments": [
+   {
+    "id": "q0",
+    "debtor": "P1",
+    "creditor": "P0",
+    "amount": 689910214,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "q1",
+    "debtor": "P0",
+    "creditor": "P1",
+    "amount": 657848640,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "q2",
+    "debtor": "P0",
+    "creditor": "P1",
+    "amount": 4,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "q3",
+    "debtor": "P1",
+    "creditor": "P0",
+    "amount": 27,
+    "priority": 2,
+    "seq": 3
+   },
+   {
+    "id": "q4",
+    "debtor": "P1",
+    "creditor": "P0",
+    "amount": 32,
+    "priority": 0,
+    "seq": 1
+   },
+   {
+    "id": "q5",
+    "debtor": "P1",
+    "creditor": "P0",
+    "amount": 394234518,
+    "priority": 1,
+    "seq": 2
+   },
+   {
+    "id": "q6",
+    "debtor": "P0",
+    "creditor": "P1",
+    "amount": 12,
+    "priority": 1,
+    "seq": 0
+   },
+   {
+    "id": "q7",
+    "debtor": "P1",
+    "creditor": "P0",
+    "amount": 199569500,
+    "priority": 2,
+    "seq": 2
+   },
+   {
+    "id": "q8",
+    "debtor": "P0",
+    "creditor": "P1",
+    "amount": 23,
+    "priority": 2,
+    "seq": 0
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "q4",
+   "q6",
+   "q2",
+   "q8",
+   "q1",
+   "q7",
+   "q3"
+  ],
+  "unsettled": [
+   "q5",
+   "q0"
+  ],
+  "balances": {
+   "P0": 917471804,
+   "P1": 28546106
+  }
+ }
+}

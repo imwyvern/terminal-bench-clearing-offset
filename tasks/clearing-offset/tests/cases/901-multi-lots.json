@@ -1,0 +1,128 @@
+{
+ "note": "mined multi-hop partial-lot batch (lots_b11_1552); checked offline by tools/verify_pp.py against pass-by-pass simulation",
+ "batch": {
+  "participants": [
+   {
+    "id": "P0",
+    "collateral": 847025397,
+    "reserve": 847025397,
+    "ceiling": 847025404
+   },
+   {
+    "id": "P1",
+    "collateral": 488696459,
+    "reserve": 488696452,
+    "ceiling": 488696466
+   },
+   {
+    "id": "P2",
+    "collateral": 119209718,
+    "reserve": 0,
+    "ceiling": 769203454
+   }
+  ],
+  "payments": [
+   {
+    "id": "q0",
+    "debtor": "P2",
+    "creditor": "P1",
+    "amount": 16,
+    "priority": 2,
+    "seq": 3
+   },
+   {
+    "id": "q1",
+    "debtor": "P0",
+    "creditor": "P1",
+    "amount": 205402214,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "q2",
+    "debtor": "P0",
+    "creditor": "P1",
+    "amount": 7,
+    "priority": 0,
+    "seq": 4
+   },
+   {
+    "id": "q3",
+    "debtor": "P1",
+    "creditor": "P0",
+    "amount": 884931809,
+    "priority": 2,
+    "seq": 2
+   },
+   {
+    "id": "q4",
+    "debtor": "P1",
+    "creditor": "P2",
+    "amount": 22,
+    "priority": 0,
+    "seq": 3
+   },
+   {
+    "id": "q5",
+    "debtor": "P0",
+    "creditor": "P1",
+    "amount": 523696312,
+    "priority": 1,
+    "seq": 0
+   },
+   {
+    "id": "q6",
+    "debtor": "P2",
+    "creditor": "P1",
+    "amount": 112983074,
+    "priority": 2,
+    "seq": 4
+   },
+   {
+    "id": "q7",
+    "debtor": "P0",
+    "creditor": "P2",
+    "amount": 21,
+    "priority": 0,
+    "seq": 4
+   },
+   {
+    "id": "q8",
+    "debtor": "P2",
+    "creditor": "P0",
+    "amount": 37,
+    "priority": 1,
+    "seq": 3
+   },
+   {
+    "id": "q9",
+    "debtor": "P0",
+    "creditor": "P2",
+    "amount": 630565191,
+    "priority": 2,
+    "seq": 1
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "q4",
+   "q2",
+   "q7",
+   "q0",
+   "q6"
+  ],
+  "unsettled": [
+   "q5",
+   "q8",
+   "q1",
+   "q9",
+   "q3"
+  ],
+  "balances": {
+   "P0": 847025399,
+   "P1": 488696454,
+   "P2": 119209721
+  }
+ }
+}

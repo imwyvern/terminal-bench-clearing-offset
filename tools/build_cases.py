@@ -8,7 +8,7 @@ Mutant-killer cases: for each single wrong reading of one rule (tools/mutants.py
 this script searches small random batches for the smallest one on which the wrong reading gives a
 different report and stores it as a case, so every wrong reading fails at least two stored cases.
 
-Usage: python3 tools/build_cases.py
+Usage: python3 tools/build_cases.py   (or --multi-lots to rebuild only the 9xx-multi-lots cases)
 """
 from __future__ import annotations
 
@@ -35,6 +35,7 @@ from lumen import engine  # noqa: E402
 CASES = TASK / "tests" / "cases"
 FIXTURES = TASK / "environment" / "fixtures"
 MINED = ROOT / "tools" / "mined"
+MINED_LOTS = ROOT / "tools" / "mined_lots"
 
 
 def B(parts, pays):
@@ -321,9 +322,30 @@ def main() -> None:
         assert dt < 2.0, (path.name, dt)
         write(f"7{path.stem}-hard", batch, mine, "mined hard batch, checked offline against tools/ref_milp.py")
         stats.append((f"7{path.stem}-hard", len(batch["payments"]), len(mine["settled"]), round(dt, 3)))
+    stats += multi_lots()
     for row in stats:
         print(row)
 
 
+def multi_lots():
+    """9xx-multi-lots: mined batches (tools/gen_lots.py) with several long multi-hop partial-lot phases."""
+    stats = []
+    for old in CASES.glob("9*-multi-lots.json"):
+        old.unlink()
+    for n, path in enumerate(sorted(MINED_LOTS.glob("*.json"))):
+        batch = json.loads(path.read_text(encoding="utf-8"))
+        t0 = time.time()
+        mine = engine.settle(json.loads(json.dumps(batch)))
+        dt = time.time() - t0
+        assert dt < 1.0, (path.name, dt)
+        write(f"9{n:02d}-multi-lots", batch, mine, f"mined multi-hop partial-lot batch ({path.stem}); checked offline by tools/verify_pp.py against pass-by-pass simulation")
+        stats.append((f"9{n:02d}-multi-lots", len(batch["payments"]), len(mine["settled"]), round(dt, 3)))
+    return stats
+
+
 if __name__ == "__main__":
-    main()
+    if sys.argv[1:] == ["--multi-lots"]:
+        for row in multi_lots():
+            print(row)
+    else:
+        main()

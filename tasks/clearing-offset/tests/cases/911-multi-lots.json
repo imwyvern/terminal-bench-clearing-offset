@@ -1,0 +1,261 @@
+{
+ "note": "mined multi-hop partial-lot batch (lots_c21_1375); checked offline by tools/verify_pp.py against pass-by-pass simulation",
+ "batch": {
+  "participants": [
+   {
+    "id": "P0",
+    "collateral": 10,
+    "reserve": 0,
+    "ceiling": 10
+   },
+   {
+    "id": "P1",
+    "collateral": 385293285,
+    "reserve": 192646642,
+    "ceiling": 385293292
+   },
+   {
+    "id": "P2",
+    "collateral": 555832220,
+    "reserve": 0,
+    "ceiling": 555832220
+   },
+   {
+    "id": "P3",
+    "collateral": 0,
+    "reserve": 0,
+    "ceiling": 7
+   }
+  ],
+  "payments": [
+   {
+    "id": "q0",
+    "debtor": "P1",
+    "creditor": "P0",
+    "amount": 9,
+    "priority": 2,
+    "seq": 3
+   },
+   {
+    "id": "q1",
+    "debtor": "P0",
+    "creditor": "P2",
+    "amount": 553221417,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "q2",
+    "debtor": "P0",
+    "creditor": "P2",
+    "amount": 33,
+    "priority": 0,
+    "seq": 1
+   },
+   {
+    "id": "q3",
+    "debtor": "P0",
+    "creditor": "P2",
+    "amount": 521920865,
+    "priority": 1,
+    "seq": 3
+   },
+   {
+    "id": "q4",
+    "debtor": "P1",
+    "creditor": "P2",
+    "amount": 144947358,
+    "priority": 2,
+    "seq": 4
+   },
+   {
+    "id": "q5",
+    "debtor": "P1",
+    "creditor": "P0",
+    "amount": 937365349,
+    "priority": 1,
+    "seq": 0
+   },
+   {
+    "id": "q6",
+    "debtor": "P0",
+    "creditor": "P1",
+    "amount": 431768749,
+    "priority": 0,
+    "seq": 4
+   },
+   {
+    "id": "q7",
+    "debtor": "P1",
+    "creditor": "P0",
+    "amount": 428831763,
+    "priority": 2,
+    "seq": 3
+   },
+   {
+    "id": "q8",
+    "debtor": "P0",
+    "creditor": "P1",
+    "amount": 14,
+    "priority": 0,
+    "seq": 2
+   },
+   {
+    "id": "q9",
+    "debtor": "P0",
+    "creditor": "P2",
+    "amount": 707654998,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "q10",
+    "debtor": "P0",
+    "creditor": "P3",
+    "amount": 492115007,
+    "priority": 2,
+    "seq": 4
+   },
+   {
+    "id": "q11",
+    "debtor": "P3",
+    "creditor": "P1",
+    "amount": 761213886,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "q12",
+    "debtor": "P2",
+    "creditor": "P0",
+    "amount": 23,
+    "priority": 1,
+    "seq": 3
+   },
+   {
+    "id": "q13",
+    "debtor": "P0",
+    "creditor": "P2",
+    "amount": 29,
+    "priority": 1,
+    "seq": 0
+   },
+   {
+    "id": "q14",
+    "debtor": "P1",
+    "creditor": "P3",
+    "amount": 1,
+    "priority": 2,
+    "seq": 1
+   },
+   {
+    "id": "q15",
+    "debtor": "P1",
+    "creditor": "P2",
+    "amount": 40,
+    "priority": 1,
+    "seq": 1
+   },
+   {
+    "id": "q16",
+    "debtor": "P0",
+    "creditor": "P1",
+    "amount": 182404801,
+    "priority": 0,
+    "seq": 3
+   },
+   {
+    "id": "q17",
+    "debtor": "P1",
+    "creditor": "P2",
+    "amount": 26,
+    "priority": 0,
+    "seq": 4
+   },
+   {
+    "id": "q18",
+    "debtor": "P3",
+    "creditor": "P1",
+    "amount": 10,
+    "priority": 2,
+    "seq": 3
+   },
+   {
+    "id": "q19",
+    "debtor": "P3",
+    "creditor": "P0",
+    "amount": 4,
+    "priority": 1,
+    "seq": 2
+   },
+   {
+    "id": "q20",
+    "debtor": "P2",
+    "creditor": "P1",
+    "amount": 38,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "q21",
+    "debtor": "P0",
+    "creditor": "P3",
+    "amount": 752803519,
+    "priority": 2,
+    "seq": 4
+   },
+   {
+    "id": "q22",
+    "debtor": "P2",
+    "creditor": "P3",
+    "amount": 181411995,
+    "priority": 2,
+    "seq": 0
+   },
+   {
+    "id": "q23",
+    "debtor": "P1",
+    "creditor": "P0",
+    "amount": 901952918,
+    "priority": 2,
+    "seq": 3
+   }
+  ]
+ },
+ "expected": {
+  "settled": [
+   "q11",
+   "q20",
+   "q22",
+   "q14",
+   "q0",
+   "q18",
+   "q7",
+   "q4"
+  ],
+  "unsettled": [
+   "q2",
+   "q8",
+   "q16",
+   "q17",
+   "q6",
+   "q13",
+   "q5",
+   "q15",
+   "q19",
+   "q12",
+   "q3",
+   "q1",
+   "q9",
+   "q23",
+   "q10",
+   "q21"
+  ],
+  "balances": {
+   "P0": 7,
+   "P1": 385293283,
+   "P2": 555832220,
+   "P3": 5
+  }
+ }
+}
