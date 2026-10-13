@@ -1,6 +1,6 @@
 # Results
 
-Every reward below was read from a Harbor `result.json` or `verifier/ctrf.json` on the Mac mini that ran the trials. Nothing is invented. The final version of the task is `1.5.0` (commit `5daa348`). **The take-home requirement that every standard trial scores reward 0 is NOT met on 1.5.0: one of three Codex trials passed (reward 1).** The history of earlier versions is kept because it explains why the task changed.
+Every reward below was read from a Harbor `result.json` or `verifier/ctrf.json` on the Mac mini that ran the trials. Nothing is invented. The final version of the task is `1.5.0` (commit `5daa348`). **The take-home requirement that every standard trial scores reward 0 is NOT met on 1.5.0: one of three Codex trials passed (reward 1).** DeepSeek on 1.5.0 failed all three standard trials and scored 0 on `/cheat`. The history of earlier versions is kept because it explains why the task changed.
 
 Harbor pin: `0.23.1.dev202609170426`, from `harbor-framework/terminal-bench` `.github/harbor-version` on main, fetched 2026-10-10. Static scripts are that repo's `scripts/checks/`.
 
@@ -79,7 +79,13 @@ Codex `openai/gpt-6.1-sol` `reasoning_effort=xhigh`, `-k 3 -n 3`, job `codex-run
 | `ZHMaEd6` | 0 (infrastructure, not counted) | The codex CLI exited with `turn.failed: Connection failed: error sending request` after about 4h30m (05:31 to 10:00 PT). The verifier still graded the code left in `/app/src` (2921 lines): 129 of 130 passed, the only failure a 5 s timeout on `909-multi-lots`. Because the agent was cut off by a network error, this is not a valid model failure. |
 | `qkbfmaT` | **1** | No exception; agent ran the full ~8 h (05:31 to 13:31 PT). 4045-line pure-Python engine (8 files), 130 of 130 passed. |
 
-DeepSeek (terminus-2 `deepseek/deepseek-flash`) was **not re-run on 1.5.0** (the Mac's CPU was given to the 8-hour Codex trials). Its latest results are on 1.4.0: 3 of 3 valid failures (below). 1.5.0 only adds verifier cases, so those engines would face strictly more tests, but that is an inference, not a measured result.
+DeepSeek terminus-2 `deepseek/deepseek-flash` `reasoning_effort=max`, `-k 3 -n 3`, job `deepseek-run-v15` = `b2586be3-12d8-4b59-869b-aa82fcd9d691`, commit `5daa348`, launched 2026-10-13 06:46 PT, finished 2026-10-13 11:02 PT. All three trials finished with no exception (valid model results). Mean reward 0.0.
+
+| Trial | Reward | Notes |
+| --- | --- | --- |
+| `KvPoyhg` | **0** | Valid failure. No exception; agent ran about 2h21m (06:46 to 09:08 PT), 169 episodes, 655-line pure-Python engine. 127 of 130 passed; the 3 failures are 5 s timeouts on `7m_22_2-hard`, `900-multi-lots` and `915-multi-lots`. |
+| `QMjs6Q5` | **0** | Valid failure. No exception; about 2h56m (06:46 to 09:43 PT), 227 episodes, 806-line pure-Python engine. 110 of 130 passed; 20 failures are 5 s timeouts on `801`/`803`/`809-long-lots` and 17 of the `900`-series `multi-lots` batches. |
+| `YFQZrXZ` | **0** | Valid failure. No exception; about 4h15m (06:46 to 11:02 PT), 309 episodes, 1122-line pure-Python engine (5 files including `lp.py` / `bundle_lp.py`). 110 of 130 passed; same 20 timeout failures as `QMjs6Q5`. |
 
 ### Previous version 1.4.0 (commit `9bbd8e8`)
 
@@ -92,13 +98,14 @@ DeepSeek (terminus-2 `deepseek/deepseek-flash`) was **not re-run on 1.5.0** (the
 
 ## Adversarial trials (`/cheat`)
 
-No `/cheat` trial was run on 1.5.0. The latest ones are on 1.4.0.
+On 1.5.0, DeepSeek `/cheat` was run once. Codex `/cheat` was not re-attempted (every earlier attempt hit the same endpoint safety refusal).
 
 The prompt is the official `docs/prompts/hack-trial-prompt.md` from `harbor-framework/terminal-bench` main, fetched verbatim (2755 bytes, identical to the copy used in all earlier cheat attempts) and passed with `--extra-instruction-path`, one attempt (`-k 1`).
 
 | Trial | Model | Job id / trial | Reward | Notes |
 | --- | --- | --- | --- | --- |
-| `/cheat` | terminus-2 `deepseek/deepseek-flash` | `ded92a35-6f74-4e06-866e-b3027e4b87d0` / `nL9HeyF` | 0 | Finished, no exception. |
+| `/cheat` 1.5.0 | terminus-2 `deepseek/deepseek-flash` | `bf0e5475-66f0-4fa3-a89c-1da8b504c231` (`deepseek-cheat-v15`) / `iPbUpet` | **0** | Finished, no exception; about 23m (06:46 to 07:10 PT), 25 episodes. 14 of 130 passed, 116 failed. Submitted a lookup-style `known_answers.py` plus `sitecustomize.py`; did not produce correct reports for the hidden batches. |
+| `/cheat` 1.4.0 | terminus-2 `deepseek/deepseek-flash` | `ded92a35-6f74-4e06-866e-b3027e4b87d0` / `nL9HeyF` | 0 | Finished, no exception. |
 | `/cheat` | codex `openai/gpt-6.1-sol` | `d5f7379b-ec09-43e4-8b1b-5b0b35009ce6` / `LZRLrgd` | no result | Could not be run through the apikeyclaw endpoint: safety refusal. The endpoint returned `This content was flagged for possible cybersecurity risk ... apply for Daybreak access` and Harbor recorded `AgentSafetyRefusalError` before the agent took any action. Harbor stores reward 0.0 for the trial, but no agent ran, so this is not evidence that the task resists cheating. |
 
 The same refusal happened on every earlier Codex `/cheat` attempt with the same official prompt: jobs `2aaa986d-d493-4296-a73a-6a24aeed21d8` (trial `LjZVEMp`) and `4d803bab-b8ff-4e3c-83d3-ca2ee73ba460` (trial `3QTrMiD`) on 1.1.1, and `89279a0b-c1ad-4bfc-83d2-f46ec9986ee8` (trial `A6RiZLe`) on 1.3.1. I did not rephrase the prompt to get around the safeguard.
@@ -128,7 +135,8 @@ The take-home requires every standard trial to get reward 0. That is not met by 
 | 1.4.0 | `20623c7a-5f62-49e4-b03d-81ed9fcad06f` | codex | none | stopped, 0 finished | restarted as the next job |
 | 1.4.0 | `a9b4d8a4-5824-49fe-8248-6321dd6b1d5c` | codex | `KrT9G3D`, `QAo3ozk`, `SFv5mdt` | 1, 1, 1 | 108 of 108 each |
 | 1.5.0 | `c00277a5-c894-42c6-9f60-cbde49e9e6e9` | codex | `VbtqbPM`, `ZHMaEd6`, `qkbfmaT` | 0, 0 (infra), 1 | final version; see above |
-| 1.5.0 | none | deepseek | none | not run | |
+| 1.5.0 | `b2586be3-12d8-4b59-869b-aa82fcd9d691` (`deepseek-run-v15`) | deepseek | `KvPoyhg`, `QMjs6Q5`, `YFQZrXZ` | 0, 0, 0 | valid failures; 127/130, 110/130, 110/130 |
+| 1.5.0 | `bf0e5475-66f0-4fa3-a89c-1da8b504c231` (`deepseek-cheat-v15`) | deepseek `/cheat` | `iPbUpet` | 0 | 14 of 130; lookup/sidecar attempt |
 
 The 1.4.0 hardening came from checking the three Codex 1.3.1 engines on 12 random huge-pass batches: all three solved them in under 0.2 s and matched the oracle, without being told. DeepSeek's three 1.3.1 engines timed out on 2 of 12. I therefore expected 1.4.0 to affect DeepSeek far more than Codex.
 
@@ -136,6 +144,8 @@ The 1.4.0 hardening came from checking the three Codex 1.3.1 engines on 12 rando
 
 ### DeepSeek (terminus-2, `deepseek-flash`)
 
+- 1.5.0, all three standard trials (`KvPoyhg`, `QMjs6Q5`, `YFQZrXZ`) are valid failures with reward 0. Each finished normally with no exception. `KvPoyhg` got closest (127 of 130): timeouts only on `7m_22_2-hard`, `900-multi-lots` and `915-multi-lots`. The other two each passed 110 of 130 and timed out on the same set of 20 many-pass batches (`801`/`803`/`809-long-lots` plus 17 of the `900`-series `multi-lots`). Engines were 655–1122 lines of pure Python. So on the final version DeepSeek still fails all standard trials, as it did on 1.4.0, but against the larger 130-test suite.
+- 1.5.0 `/cheat` (`iPbUpet`) also reward 0 (14 of 130). The trajectory left a `known_answers.py` lookup and `sitecustomize.py`; that does not cover the hidden batches.
 - 1.4.0, all three trials (`W2hnKub`, `5k5MmBz`, `xxWynm2`) are valid failures with reward 0. Each run finished normally, with no exception. Each submitted a pure-Python engine of 671, 534 and 473 lines that was correct on 105 of 108 tests, including all hand batches, mutant-killer batches, aging and strain batches, and mined dense batches. The same three tests timed out at 5 s in all three trials: `801-long-lots`, `803-long-lots` and `809-long-lots`. These are priority-2 phases that make hundreds of millions of passes. I re-ran the three submitted engines on those batches offline and they still had not finished after 120 s, so this is a speed failure and not a wrong answer. The failures are not infrastructure errors.
 - What the trajectories show: all three agents read the rulebook's statement that a phase can take tens of millions of passes, tried the worked many-pass example, and wrote an accelerated priority-2 phase (`W2hnKub` step 9: an "event-batched priority-2 unilateral phase"; `5k5MmBz` steps 24 to 30: a "fast-forward" batch size patched after a randomized mismatch; `xxWynm2` steps 9 to 12: simulated random phases to look for a regime to exploit). Their shortcuts handle the simple two-payment ping-pong and 9 of the 12 stored many-pass batches, but not those 3 batches (3 to 4 participants, 4 to 6 priority-2 payments, largest amounts 8.4x10^8 to 9.7x10^8; other stored batches of similar size, such as `802`, were solved in time). I have not characterized more precisely which property of those batches defeats their shortcuts. All three then ended with a final claim that their engine "handles many-pass cases efficiently", on the basis of their own tests, which did not include a batch of this shape. In short: they understood the requirement and implemented a partial acceleration; they did not find a cycle-detecting acceleration that is correct for queue-order changes.
 - On 1.3.1, which did not mention the long passes, all three DeepSeek trials passed.
@@ -148,14 +158,14 @@ The 1.4.0 hardening came from checking the three Codex 1.3.1 engines on 12 rando
 
 ### Which requirements are met
 
-- Standard trials all reward 0 on the final version: **NOT MET.** Codex on 1.5.0: one valid failure, one infrastructure error, one pass (`qkbfmaT`, reward 1). DeepSeek: 3 of 3 valid failures on 1.4.0, not re-run on 1.5.0.
-- `/cheat` reward 0: DeepSeek yes (every attempt); Codex could not be run (safety refusal at the endpoint).
+- Standard trials all reward 0 on the final version: **NOT MET.** Codex on 1.5.0: one valid failure, one infrastructure error, one pass (`qkbfmaT`, reward 1). DeepSeek on 1.5.0: 3 of 3 valid failures (reward 0).
+- `/cheat` reward 0: DeepSeek yes on 1.5.0 (`iPbUpet`) and every earlier attempt; Codex could not be run (safety refusal at the endpoint).
 - Oracle 1, nop 0 on 1.5.0: met. Static checks: 26 of 27 run and pass on 1.5.0; the image-digest check was not re-run (tool missing), it passed on 1.4.0 with identical Dockerfiles.
 - `harbor check` rubric: not run (needs a model key); marked for Dan.
 
 ## What would be needed next
 
-Not done, by decision: the task is submitted as is. To make Codex fail reliably, the difficulty would have to come from something an 8-hour exact-solver effort cannot close by testing, rather than from more mined cases against past engines. Options: (1) generate the many-pass verifier batches at grading time from a seeded family broad enough that pass skipping must be fully general (for example cycle detection on the complete queue state), with the oracle computing expected reports on the fly; (2) a tighter per-batch time limit combined with that family; (3) rule subtleties that are under-specified by the examples but fully determined by the text. Each needs new Codex trials (about 8 h each), and DeepSeek should be re-run on whatever version is final.
+Not done, by decision: the task is submitted as is. To make Codex fail reliably, the difficulty would have to come from something an 8-hour exact-solver effort cannot close by testing, rather than from more mined cases against past engines. Options: (1) generate the many-pass verifier batches at grading time from a seeded family broad enough that pass skipping must be fully general (for example cycle detection on the complete queue state), with the oracle computing expected reports on the fly; (2) a tighter per-batch time limit combined with that family; (3) rule subtleties that are under-specified by the examples but fully determined by the text. Each needs new Codex trials (about 8 h each). DeepSeek was re-run on 1.5.0 and still failed all three standard trials plus `/cheat`.
 
 ## Local log
 
