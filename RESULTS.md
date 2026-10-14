@@ -1,6 +1,6 @@
 # Results
 
-Every reward below was read from a Harbor `result.json` or `verifier/ctrf.json` on the Mac mini that ran the trials. Nothing is invented. The final version of the task is `1.5.0` (commit `5daa348`). **The take-home requirement that every standard trial scores reward 0 is NOT met on 1.5.0: one of three Codex trials passed (reward 1).** DeepSeek on 1.5.0 failed all three standard trials and scored 0 on `/cheat`. The history of earlier versions is kept because it explains why the task changed.
+Every reward below was read from a Harbor `result.json` or `verifier/ctrf.json` on the Mac mini that ran the trials. Nothing is invented. The final version of the task is `1.5.0` (commit `5daa348`). **The take-home requirement that every standard trial scores reward 0 is NOT met on 1.5.0: Codex passed 1 of 3 on the first 1.5.0 job (`codex-run-v15`) and again 1 of 3 on the re-run (`codex-run-v15b`).** DeepSeek on 1.5.0 failed all three standard trials and scored 0 on `/cheat`. The history of earlier versions is kept because it explains why the task changed.
 
 Harbor pin: `0.23.1.dev202609170426`, from `harbor-framework/terminal-bench` `.github/harbor-version` on main, fetched 2026-10-10. Static scripts are that repo's `scripts/checks/`.
 
@@ -87,6 +87,20 @@ DeepSeek terminus-2 `deepseek/deepseek-flash` `reasoning_effort=max`, `-k 3 -n 3
 | `QMjs6Q5` | **0** | Valid failure. No exception; about 2h56m (06:46 to 09:43 PT), 227 episodes, 806-line pure-Python engine. 110 of 130 passed; 20 failures are 5 s timeouts on `801`/`803`/`809-long-lots` and 17 of the `900`-series `multi-lots` batches. |
 | `YFQZrXZ` | **0** | Valid failure. No exception; about 4h15m (06:46 to 11:02 PT), 309 episodes, 1122-line pure-Python engine (5 files including `lp.py` / `bundle_lp.py`). 110 of 130 passed; same 20 timeout failures as `QMjs6Q5`. |
 
+
+### Codex re-run requested by Xiangkai (`codex-run-v15b`)
+
+Same model and settings: Codex `openai/gpt-6.1-sol` `reasoning_effort=xhigh`, `-k 3 -n 3`, Harbor job `codex-run-v15b` = `7764ed94-053f-4e72-89b6-2a5c7b7163d5`, task still at commit `5daa348` / version 1.5.0 (RESULTS baseline was `0e3b88f` before this update). Launched 2026-10-13 about 8:07 PM PT, finished 2026-10-14 about 4:10 AM PT (total runtime 8h 2m 57s). Mean reward 0.333; Pass@2 0.667. One `AgentTimeoutError` (counted separately below). **Requirement still NOT met.**
+
+| Trial | Reward | Notes |
+| --- | --- | --- |
+| `VVA9VE9` | **0** | Valid failure. No exception; agent ran about 8h (8:09 PM PT Oct 13 to 4:09 AM PT Oct 14). 127 of 130 passed; the 3 failures are 5 s timeouts (`AssertionError: timed out` / `TimeoutExpired` after 5 seconds) on `909-multi-lots`, `917-multi-lots` and `920-multi-lots`. |
+| `9e476uJ` | **0** | Valid failure. No exception; agent ran about 1h51m (8:09 PM to 10:00 PM PT Oct 13). 129 of 130 passed; the only failure is a 5 s timeout on `909-multi-lots`. |
+| `Q2FcQtA` | **1** | `AgentTimeoutError` after 28800 s (8h agent timeout), but Harbor still ran the verifier on the submitted code: 130 of 130 passed, reward 1. Same timeout-then-pass pattern as earlier Codex trials. Infrastructure/timeout exception counted separately from the two valid reward-0 failures. |
+
+Infrastructure / non-model errors in this job: 1 (`AgentTimeoutError` on `Q2FcQtA`). The timeout trial still received a graded reward 1 from the verifier.
+
+
 ### Previous version 1.4.0 (commit `9bbd8e8`)
 
 | Trial | Model | Job id / trial | Reward | Notes |
@@ -158,7 +172,7 @@ The 1.4.0 hardening came from checking the three Codex 1.3.1 engines on 12 rando
 
 ### Which requirements are met
 
-- Standard trials all reward 0 on the final version: **NOT MET.** Codex on 1.5.0: one valid failure, one infrastructure error, one pass (`qkbfmaT`, reward 1). DeepSeek on 1.5.0: 3 of 3 valid failures (reward 0).
+- Standard trials all reward 0 on the final version: **NOT MET.** Codex on 1.5.0 first job (`codex-run-v15`): one valid failure, one infrastructure error, one pass (`qkbfmaT`, reward 1). Codex re-run (`codex-run-v15b`): two valid failures (`VVA9VE9`, `9e476uJ`) and one pass (`Q2FcQtA`, reward 1) with `AgentTimeoutError` on that pass. DeepSeek on 1.5.0: 3 of 3 valid failures (reward 0).
 - `/cheat` reward 0: DeepSeek yes on 1.5.0 (`iPbUpet`) and every earlier attempt; Codex could not be run (safety refusal at the endpoint).
 - Oracle 1, nop 0 on 1.5.0: met. Static checks: 26 of 27 run and pass on 1.5.0; the image-digest check was not re-run (tool missing), it passed on 1.4.0 with identical Dockerfiles.
 - `harbor check` rubric: not run (needs a model key); marked for Dan.
